@@ -28,7 +28,8 @@ after each task. Plan tasks use `- [ ]` checkboxes — check them off as complet
 - [x] Task 3: Pure name-normalization + similarity functions (4aa91f2 + fix a31b866, review Approved)
 - [x] Task 4: pglite test database harness (b4ceade, review Approved)
 - [x] Task 5: Athlete write-path service (cbd9345 + tsconfig fix f7142fa, review Approved)
-- [ ] Task 6: Admin API route + entry UI
+- [x] Task 6: Admin API route + entry UI (d7c93f2 + gate fixes 20615d9, review fixes applied)
+- [ ] Final whole-branch review + branch finishing
 
 ## To resume
 
