@@ -27,7 +27,7 @@ after each task. Plan tasks use `- [ ]` checkboxes — check them off as complet
 - [x] Task 2: Athlete + AthleteAlias schema and migration (b571321, review Approved)
 - [x] Task 3: Pure name-normalization + similarity functions (4aa91f2 + fix a31b866, review Approved)
 - [x] Task 4: pglite test database harness (b4ceade, review Approved)
-- [ ] Task 5: Athlete write-path service
+- [x] Task 5: Athlete write-path service (cbd9345 + tsconfig fix f7142fa, review Approved)
 - [ ] Task 6: Admin API route + entry UI
 
 ## To resume
