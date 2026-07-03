@@ -33,31 +33,29 @@ after each task. Plan tasks use `- [ ]` checkboxes — check them off as complet
       transliteration + empty-slug guard) + #9 (metadata) applied in 9742f03. Deferred
       Important/Minor findings recorded in the plan's "Deferred from final whole-branch
       review" section.
-- [ ] Branch finishing (merge / PR)
+- [x] Branch finishing — **merged into `master` locally** via `--no-ff` (merge commit
+      `974094f`, 2026-07-04). Feature branch `phase-a1-athlete-core` deleted locally.
 
-## Current state (paused for shutdown)
+## Current state (Phase A.1 complete + merged)
 
-- Branch `phase-a1-athlete-core`, HEAD `b5c1c0b`. **All 6 tasks implemented, individually
-  reviewed/approved, and committed.** Working tree is clean. 22/22 tests pass; `tsc --noEmit`
-  clean. A Next.js root layout (`src/app/layout.tsx`) exists so the app can run.
-- **Two steps remain:**
-  1. Final whole-branch review was dispatched (opus) but **interrupted before it finished —
-     it did NOT complete, so no final verdict exists.** Re-run it if desired.
-  2. Branch finishing (merge into `master` / open a PR / or leave as-is) — not yet done.
+- On `master`, HEAD `974094f` (merge of Phase A.1). **All 6 tasks implemented, individually
+  reviewed/approved, final whole-branch review done + fixes applied, and merged to master.**
+  Working tree clean. **25/25 tests pass; `tsc --noEmit` clean** on the merged result.
+- Merge stayed **local only** — not pushed. `origin/master` is untouched; the stale
+  `origin/phase-a1-athlete-core` branch still exists on GitHub and can be pruned.
 
-## To resume
+## To resume (Phase A.1 is done — next is a new phase)
 
-1. Read this file + the active plan.
-2. To re-run the final review: `review-package` for range `master`..`phase-a1-athlete-core`
-   (base `ac6406b`), dispatch a whole-branch reviewer (see
-   superpowers:requesting-code-review). Carried Minor findings for triage are in the ledger
-   (`.superpowers/sdd/progress.md`) — gitignored scratch; if lost, recover from `git log`.
-3. Then finish the branch via superpowers:finishing-a-development-branch.
+1. Read this file + the design spec.
+2. Optionally push `master` to origin and delete the remote feature branch.
+3. Start the next phase per the design spec (`docs/superpowers/specs/…`), beginning with
+   superpowers:brainstorming.
 
 ## Not-yet-done / open items
-- Final whole-branch review (interrupted — rerun).
-- Branch finishing (merge/PR).
+- Push `master` to origin (merge is local-only) + prune remote `phase-a1-athlete-core`.
 - Manual UI browser check (Task 6 Step 7) never run — needs a live DATABASE_URL
   (`npm run db:migrate` + `npm run dev`, visit /admin/athletes/new).
+- Deferred Important/Minor findings from the final review live in the plan doc's
+  "Deferred from final whole-branch review" section — triage in a future pass.
 
-_Last updated: 2026-07-04, paused before final review + branch finishing._
+_Last updated: 2026-07-04, Phase A.1 merged to master (local); ready for next phase._
