@@ -25,7 +25,7 @@ after each task. Plan tasks use `- [ ]` checkboxes — check them off as complet
 - [x] Plan written & committed (6f878ae)
 - [x] Task 1: Project scaffold + test harness (5bd2856, review Approved)
 - [x] Task 2: Athlete + AthleteAlias schema and migration (b571321, review Approved)
-- [ ] Task 3: Pure name-normalization + similarity functions
+- [x] Task 3: Pure name-normalization + similarity functions (4aa91f2 + fix a31b866, review Approved)
 - [ ] Task 4: pglite test database harness
 - [ ] Task 5: Athlete write-path service
 - [ ] Task 6: Admin API route + entry UI
