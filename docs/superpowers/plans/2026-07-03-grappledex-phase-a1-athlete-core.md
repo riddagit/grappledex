@@ -1034,3 +1034,27 @@ git commit -m "feat: add admin athlete-entry UI with duplicate-check gate"
 - **Phase A.2** — Promotion + Event + Match + MatchCompetitor + Placement schema and services (the results core), reusing the entity-resolution + provenance + draft/publish patterns established here.
 - **Phase A.3** — Team + temporal AthleteTeamMembership; `change_log` audit table; event-centric entry flow.
 - **Phase B** — public server-rendered pages + search + video/instructional secondary layer.
+
+## Deferred from final whole-branch review (2026-07-04)
+
+Findings from the final review that were consciously deferred rather than fixed on this
+branch (fix #4 normalization + #9 metadata were applied — commit 9742f03):
+
+- **Server-enforced duplicate gate (Important).** The duplicate-check gate is UI-only;
+  `POST /api/admin/athletes` → `createAthlete` performs no server-side duplicate check, so a
+  direct API caller can create duplicates. Matches the plan as written. Add a server guard
+  (route/service calls `findAthleteDuplicates`, rejects or requires an explicit
+  `overrideDuplicates` flag when candidates exist) — do this before any non-form write path
+  or Phase A.2.
+- **Admin authentication (Important).** No auth on `/admin/*` or `/api/admin/*` (spec §3
+  wants `is_editor`). Must land before any public/shared deployment — Phase B blocker.
+- **Route-handler integration tests (Important).** `route.test.ts` only tests the Zod
+  schema; the POST/GET 201/400 contract is untested because the handler imports the `db`
+  singleton. Refactor to inject `db` (factory) and add pglite-backed handler tests.
+- **Provenance not enforced for CONFIRMED (Minor).** `confidence: "CONFIRMED"` is accepted
+  with no `sourceUrl`/`verifiedBy`. Add a rule that CONFIRMED requires a source.
+- **Other minors:** `uniqueSlug` + create/aliases are check-then-insert / two-statement
+  (TOCTOU race + orphan-on-failure) — wrap in a transaction when concurrency matters;
+  `searchAthletes` passes `%`/`_` through as LIKE wildcards; `updatedAt` has no auto-bump;
+  `findAthleteDuplicates` loads all athletes+aliases per check (fine at ~150–200, needs a
+  DB-side trigram/FTS prefilter later).
