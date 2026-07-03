@@ -1,0 +1,11 @@
+node_modules
+.next
+.env
+.env.local
+*.tsbuildinfo
+
+# subagent-driven-development scratch (ledger/briefs/reports/diffs)
+.superpowers/
+
+# Next.js generated
+next-env.d.ts
