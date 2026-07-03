@@ -21,6 +21,7 @@ export function AthleteForm() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (!fullName || !acknowledged) return;
     const res = await fetch("/api/admin/athletes", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -35,7 +36,11 @@ export function AthleteForm() {
         Full name
         <input
           value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
+          onChange={(e) => {
+            setFullName(e.target.value);
+            setAcknowledged(false);
+            setDups([]);
+          }}
           onBlur={checkDuplicates}
         />
       </label>
