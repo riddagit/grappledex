@@ -23,8 +23,8 @@ after each task. Plan tasks use `- [ ]` checkboxes — check them off as complet
 
 - [x] Brainstorm → spec written & committed (58fb072)
 - [x] Plan written & committed (6f878ae)
-- [ ] Task 1: Project scaffold + test harness
-- [ ] Task 2: Athlete + AthleteAlias schema and migration
+- [x] Task 1: Project scaffold + test harness (5bd2856, review Approved)
+- [x] Task 2: Athlete + AthleteAlias schema and migration (b571321, review Approved)
 - [ ] Task 3: Pure name-normalization + similarity functions
 - [ ] Task 4: pglite test database harness
 - [ ] Task 5: Athlete write-path service
