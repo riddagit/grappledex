@@ -17,7 +17,9 @@ export type CreateAthleteInput = {
 };
 
 async function uniqueSlug(db: Db, fullName: string): Promise<string> {
-  const base = slugify(fullName);
+  // Names with no Latin content (e.g. CJK, Cyrillic) slugify to "" — fall back
+  // to a placeholder so the slug column is never blank.
+  const base = slugify(fullName) || "athlete";
   let candidate = base;
   let n = 1;
   // Loop until no row owns the candidate slug.

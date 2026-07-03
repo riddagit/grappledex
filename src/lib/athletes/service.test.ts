@@ -28,6 +28,13 @@ describe("createAthlete", () => {
     expect(b.slug).toBe("john-smith-2");
   });
 
+  it("falls back to a placeholder slug when the name has no latin content", async () => {
+    const a = await createAthlete(ctx.db, { fullName: "山田太郎" });
+    const b = await createAthlete(ctx.db, { fullName: "佐藤花子" });
+    expect(a.slug).toBe("athlete");
+    expect(b.slug).toBe("athlete-2");
+  });
+
   it("stores provided aliases", async () => {
     await createAthlete(ctx.db, { fullName: "Nicky Rodriguez", aliases: ["Nicky Rod"] });
     const hits = await findAthleteDuplicates(ctx.db, "Nicky Rod");
