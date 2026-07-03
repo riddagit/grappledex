@@ -31,11 +31,29 @@ after each task. Plan tasks use `- [ ]` checkboxes — check them off as complet
 - [x] Task 6: Admin API route + entry UI (d7c93f2 + gate fixes 20615d9, review fixes applied)
 - [ ] Final whole-branch review + branch finishing
 
+## Current state (paused for shutdown)
+
+- Branch `phase-a1-athlete-core`, HEAD `b5c1c0b`. **All 6 tasks implemented, individually
+  reviewed/approved, and committed.** Working tree is clean. 22/22 tests pass; `tsc --noEmit`
+  clean. A Next.js root layout (`src/app/layout.tsx`) exists so the app can run.
+- **Two steps remain:**
+  1. Final whole-branch review was dispatched (opus) but **interrupted before it finished —
+     it did NOT complete, so no final verdict exists.** Re-run it if desired.
+  2. Branch finishing (merge into `master` / open a PR / or leave as-is) — not yet done.
+
 ## To resume
 
 1. Read this file + the active plan.
-2. Find the first unchecked task above.
-3. Continue subagent-driven execution from that task (invoke
-   superpowers:subagent-driven-development).
+2. To re-run the final review: `review-package` for range `master`..`phase-a1-athlete-core`
+   (base `ac6406b`), dispatch a whole-branch reviewer (see
+   superpowers:requesting-code-review). Carried Minor findings for triage are in the ledger
+   (`.superpowers/sdd/progress.md`) — gitignored scratch; if lost, recover from `git log`.
+3. Then finish the branch via superpowers:finishing-a-development-branch.
 
-_Last updated: 2026-07-03, before Task 1._
+## Not-yet-done / open items
+- Final whole-branch review (interrupted — rerun).
+- Branch finishing (merge/PR).
+- Manual UI browser check (Task 6 Step 7) never run — needs a live DATABASE_URL
+  (`npm run db:migrate` + `npm run dev`, visit /admin/athletes/new).
+
+_Last updated: 2026-07-04, paused before final review + branch finishing._
