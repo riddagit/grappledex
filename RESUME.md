@@ -29,7 +29,11 @@ after each task. Plan tasks use `- [ ]` checkboxes — check them off as complet
 - [x] Task 4: pglite test database harness (b4ceade, review Approved)
 - [x] Task 5: Athlete write-path service (cbd9345 + tsconfig fix f7142fa, review Approved)
 - [x] Task 6: Admin API route + entry UI (d7c93f2 + gate fixes 20615d9, review fixes applied)
-- [ ] Final whole-branch review + branch finishing
+- [x] Final whole-branch review (opus, verdict "with fixes", no Critical). Fixes #4 (name
+      transliteration + empty-slug guard) + #9 (metadata) applied in 9742f03. Deferred
+      Important/Minor findings recorded in the plan's "Deferred from final whole-branch
+      review" section.
+- [ ] Branch finishing (merge / PR)
 
 ## Current state (paused for shutdown)
 
