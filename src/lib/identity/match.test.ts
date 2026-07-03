@@ -28,6 +28,7 @@ describe("findDuplicateCandidates", () => {
   it("matches on an alias", () => {
     const hits = findDuplicateCandidates("Nicky Rod", candidates);
     expect(hits[0]?.id).toBe("2");
+    expect(hits).toHaveLength(1);
   });
 
   it("returns empty when nothing clears the threshold", () => {
