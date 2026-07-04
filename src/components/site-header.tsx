@@ -1,9 +1,13 @@
 import Link from "next/link";
+import { SearchBox } from "@/components/search-box";
 
 export function SiteHeader() {
   return (
     <header className="site-header">
-      <Link href="/" className="wordmark">Grappledex</Link>
+      <div className="site-header-inner">
+        <Link href="/" className="wordmark">Grappledex</Link>
+        <SearchBox />
+      </div>
     </header>
   );
 }
