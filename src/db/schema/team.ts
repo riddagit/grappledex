@@ -1,4 +1,6 @@
-import { pgTable, uuid, text, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, timestamp, index } from "drizzle-orm/pg-core";
+import { sql, type SQL } from "drizzle-orm";
+import { tsvector } from "./tsvector";
 
 export const teams = pgTable("teams", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -20,7 +22,10 @@ export const teams = pgTable("teams", {
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
-});
+  searchVector: tsvector("search_vector").generatedAlwaysAs(
+    (): SQL => sql`to_tsvector('simple', coalesce(${teams.name}, '') || ' ' || coalesce(${teams.shortName}, ''))`,
+  ),
+}, (t) => [index("teams_search_idx").using("gin", t.searchVector)]);
 
 export type Team = typeof teams.$inferSelect;
 export type NewTeam = typeof teams.$inferInsert;

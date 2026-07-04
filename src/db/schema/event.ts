@@ -1,7 +1,9 @@
 import {
   pgTable, uuid, text, date, timestamp, index,
 } from "drizzle-orm/pg-core";
+import { sql, type SQL } from "drizzle-orm";
 import { promotions } from "./promotion";
+import { tsvector } from "./tsvector";
 
 export const events = pgTable(
   "events",
@@ -31,8 +33,14 @@ export const events = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
+    searchVector: tsvector("search_vector").generatedAlwaysAs(
+      (): SQL => sql`to_tsvector('simple', coalesce(${events.name}, ''))`,
+    ),
   },
-  (t) => [index("events_promotion_id_idx").on(t.promotionId)],
+  (t) => [
+    index("events_promotion_id_idx").on(t.promotionId),
+    index("events_search_idx").using("gin", t.searchVector),
+  ],
 );
 
 export type Event = typeof events.$inferSelect;
