@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { CreatePromotionSchema } from "@/app/api/admin/promotions/route";
+import { CreatePromotionSchema } from "@/app/api/admin/promotions/validation";
 
 describe("CreatePromotionSchema", () => {
   it("accepts a valid payload", () => {

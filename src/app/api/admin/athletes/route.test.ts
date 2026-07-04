@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { CreateAthleteSchema } from "@/app/api/admin/athletes/route";
+import { CreateAthleteSchema } from "@/app/api/admin/athletes/validation";
 
 describe("CreateAthleteSchema", () => {
   it("accepts a valid payload", () => {

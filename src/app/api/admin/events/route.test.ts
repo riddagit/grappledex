@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { CreateEventSchema } from "@/app/api/admin/events/route";
+import { CreateEventSchema } from "@/app/api/admin/events/validation";
 
 describe("CreateEventSchema", () => {
   it("accepts a valid payload", () => {

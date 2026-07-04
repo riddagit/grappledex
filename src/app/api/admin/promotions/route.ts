@@ -1,16 +1,7 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
 import { db } from "@/db/client";
 import { createPromotion, searchPromotions } from "@/lib/promotions/service";
-
-export const CreatePromotionSchema = z.object({
-  name: z.string().min(1),
-  shortName: z.string().optional(),
-  sourceUrl: z.string().url().optional(),
-  verifiedBy: z.string().optional(),
-  confidence: z.enum(["CONFIRMED", "NEEDS_REVIEW"]).optional(),
-  status: z.enum(["draft", "published"]).optional(),
-});
+import { CreatePromotionSchema } from "./validation";
 
 export async function POST(request: Request) {
   const body = await request.json();
