@@ -1,5 +1,8 @@
 # Grappledex Phase A.3 — Team + Temporal Membership Implementation Plan
 
+**Status:** ✅ Complete — implemented on `phase-a3-team-membership`, merged to `main`.
+All 5 tasks done; full suite 65 tests green, `tsc --noEmit` clean, `next build` passes.
+
 **Goal:** Implement Team and temporal AthleteTeamMembership — typed, tested schema +
 write-path services plus an athlete-typeahead team-hub admin flow — reusing the
 provenance, draft/publish, slug, and entity-resolution patterns from A.1/A.2.
