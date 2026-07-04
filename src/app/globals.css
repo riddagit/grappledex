@@ -81,7 +81,10 @@ a { color: inherit; }
 .eyebrow a:hover { color: var(--ink); border-color: var(--accent); }
 
 /* ---- identity header: optional portrait + name ---- */
-.idhead { display: flex; gap: clamp(1rem, 3vw, 2rem); align-items: flex-end; }
+.idhead {
+  display: flex; gap: clamp(1rem, 3vw, 2rem);
+  align-items: flex-end; justify-content: space-between;
+}
 .portrait {
   width: clamp(5rem, 18vw, 9rem);
   aspect-ratio: 3 / 4;

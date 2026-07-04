@@ -82,9 +82,9 @@ function Header({ page }: { page: AthletePage }) {
     <header>
       {page.athlete.imageUrl ? (
         <div className="idhead">
+          {identity}
           {/* eslint-disable-next-line @next/next/no-img-element -- v1 links external images, never re-hosts */}
           <img className="portrait" src={page.athlete.imageUrl} alt={page.athlete.fullName} />
-          {identity}
         </div>
       ) : (
         identity
