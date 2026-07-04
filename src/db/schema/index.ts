@@ -5,3 +5,5 @@ export * from "./match";
 export * from "./placement";
 export * from "./team";
 export * from "./membership";
+export * from "./video";
+export * from "./instructional";

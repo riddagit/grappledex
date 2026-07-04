@@ -82,6 +82,11 @@ export async function createAthlete(
   return athlete;
 }
 
+export async function getAthlete(db: Db, id: string): Promise<Athlete | null> {
+  const rows = await db.select().from(athletes).where(eq(athletes.id, id));
+  return rows[0] ?? null;
+}
+
 export async function searchAthletes(
   db: Db,
   query: string,

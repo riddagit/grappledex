@@ -3,8 +3,10 @@ import { db } from "@/db/client";
 import { getEvent } from "@/lib/events/service";
 import { listMatchesForEvent } from "@/lib/matches/service";
 import { listPlacementsForEvent } from "@/lib/placements/service";
+import { listVideosForEvent } from "@/lib/videos/service";
 import { MatchForm } from "./match-form";
 import { PlacementForm } from "./placement-form";
+import { VideoForm } from "./video-form";
 
 export default async function EventHubPage({
   params,
@@ -16,6 +18,7 @@ export default async function EventHubPage({
   if (!event) notFound();
   const matches = await listMatchesForEvent(db, id);
   const placements = await listPlacementsForEvent(db, id);
+  const videos = await listVideosForEvent(db, id);
 
   return (
     <main style={{ maxWidth: 720, margin: "2rem auto", fontFamily: "system-ui" }}>
@@ -25,9 +28,24 @@ export default async function EventHubPage({
       <section>
         <h2>Matches ({matches.length})</h2>
         <ul>
-          {matches.map((m) => (
-            <li key={m.id}>{m.matchType} · {m.weightClass ?? "—"} · {m.method}{m.methodDetail ? ` (${m.methodDetail})` : ""}</li>
-          ))}
+          {matches.map((m) => {
+            const matchVideos = videos.filter((v) => v.matchId === m.id);
+            return (
+              <li key={m.id}>
+                {m.matchType} · {m.weightClass ?? "—"} · {m.method}{m.methodDetail ? ` (${m.methodDetail})` : ""}
+                {matchVideos.length > 0 && (
+                  <ul>
+                    {matchVideos.map((v) => (
+                      <li key={v.id}>
+                        🎬 <a href={v.url} target="_blank" rel="noreferrer">{v.title ?? v.url}</a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                <VideoForm matchId={m.id} />
+              </li>
+            );
+          })}
         </ul>
         <MatchForm eventId={id} />
       </section>
