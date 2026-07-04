@@ -15,6 +15,13 @@
       "when": 1783132488251,
       "tag": "0001_productive_logan",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1783132653483,
+      "tag": "0002_productive_jackpot",
+      "breakpoints": true
     }
   ]
 }
