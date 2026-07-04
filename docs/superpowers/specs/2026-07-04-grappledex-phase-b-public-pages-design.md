@@ -64,21 +64,28 @@ test-level (pglite) until a dev DB is provisioned.
 
 ---
 
-## 5. Visual design — DIRECTION PENDING
+## 5. Visual design — CHOSEN: minimal/technical + reference-grade tables
 
-This is the product's first public look. The functional layout is locked (§2); the
-**aesthetic identity is a user decision** and is deliberately not guessed here. Candidate
-directions to confirm:
+**Direction locked (2026-07-04):** minimal/technical shell with dense reference-grade
+tables — recommended by me, user deferred to that judgment (asked "what's best?"). Rejected:
+editorial/premium (its strength is athlete imagery, which v1 deliberately does not host) and
+pure data-dense (busiest, hardest to evolve).
 
-- **A — Reference/data-dense** (Basketball-Reference / Sherdog lineage): tight tables,
-  high information density, utilitarian, fast. Signals "authoritative database."
-- **B — Editorial/premium** (modern sports media): generous type, strong athlete imagery,
-  card-driven, more brand personality.
-- **C — Minimal/technical** (clean neutral, restrained palette, system-ish type): lets the
-  data speak; cheapest to build well; easy to evolve.
+**Design thesis:** a grappler has no photo in v1 — the *record and how they finish* is the
+identity. So the page contrasts a **humanist name** (the person) with **machine-mono data**
+(the record). The signature element is the **"finish signature"** — the submission-type
+breakdown, a fighter's fingerprint, encoding the sport's essence (submissions).
 
-Once chosen, the design system (tokens, type scale, color, table + card components) is built
-with the `frontend-design` skill, theme-aware (light/dark), before the page chrome.
+**Tokens** (`src/app/globals.css`, theme-aware light/dark):
+- Cool bone/ink surfaces (`--bg #f0efeb` / dark `#0f0f11`), not the cream+terracotta or
+  serif-broadsheet AI defaults.
+- Colour is **semantic only:** ink = win, muted (`--faint`) = loss, one red
+  (`--accent #c1361b`) = *the tap* (submission), one gold (`--gold`) = a division title.
+- Type: humanist grotesk system stack for names/prose; monospace stack for all data
+  (record, tables, labels, dates) — precision + stat-sheet texture, no webfonts.
+
+**Preview:** self-contained artifact mockup (illustrative Gordon Ryan record) published for
+review — matches production tokens/classes exactly.
 
 ---
 
@@ -93,12 +100,12 @@ Clean slugs (already on every entity), full server rendering, schema.org structu
 
 ## 7. Increment sequencing
 
-- **B.1 — Foundation (this branch, now):** public read layer + seed data (TDD, no visual
-  dependency). *Started.*
-- **B.2 — Design system + Athlete page:** confirm direction (§5), build tokens/components,
-  ship `/athlete/[slug]` + landing. The keystone page.
-- **B.3 — Match + Event + Promotion + Team pages.**
-- **B.4 — SEO baseline:** structured data, sitemap, robots, metadata.
+- **B.1 — Foundation:** public read layer + seed data (TDD, no visual dependency). ✅ done.
+- **B.2 — Design system + Athlete page:** ✅ done — `globals.css` design system, semantic
+  colour, finish-signature signature element, `/athlete/[slug]` + landing, schema.org
+  Person, artifact preview. Build + 90 tests green. *Not merged; awaiting user review of look.*
+- **B.3 — Match + Event + Promotion + Team pages** (reuse the design system + read layer).
+- **B.4 — SEO baseline:** structured data (SportsEvent), sitemap, robots, per-page metadata.
 - **Search (Phase C)** stays separate.
 
 ---
