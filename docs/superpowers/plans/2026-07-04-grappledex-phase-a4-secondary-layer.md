@@ -1,6 +1,9 @@
 # Grappledex Phase A.4 — Secondary Layer (Video + Instructional) Implementation Plan
 
-**Status:** 🚧 In progress on `phase-a4-secondary-layer`.
+**Status:** ✅ Complete — implemented on `phase-a4-secondary-layer` (not yet merged;
+awaiting explicit OK to merge/push). All 5 tasks done; full suite **83 tests green**,
+`tsc --noEmit` clean, `next build` passes (17 pages). This completes the Phase A
+foundation: every core §4 entity now has schema + typed write-path + admin surface.
 
 **Goal:** Implement `Video` and `Instructional` — the last two §4 core entities — as
 typed, tested schema + write-path services plus admin entry surfaces, completing the

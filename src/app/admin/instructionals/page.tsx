@@ -2,6 +2,9 @@ import Link from "next/link";
 import { db } from "@/db/client";
 import { listInstructionals } from "@/lib/instructionals/service";
 
+// Renders live editorial data from Postgres; never statically prerendered at build.
+export const dynamic = "force-dynamic";
+
 export default async function InstructionalsBrowsePage() {
   const instructionals = await listInstructionals(db);
 
