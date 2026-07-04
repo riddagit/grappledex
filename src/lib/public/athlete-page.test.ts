@@ -29,6 +29,12 @@ describe("getAthletePage", () => {
     expect(opponents).toContain("Andre Galvao");
     expect(opponents).toContain("Nicholas Meregali");
 
+    // each match-history row carries its own watch links; the seeded superfight
+    // (Gordon vs Galvao) has a video, the bracket final does not.
+    const withVideo = page.matchHistory.filter((m) => m.videos.length > 0);
+    expect(withVideo).toHaveLength(1);
+    expect(withVideo[0]?.videos[0]?.url).toContain("youtube.com");
+
     // related lists
     expect(page.placements).toHaveLength(1);
     expect(page.teamTimeline).toHaveLength(1);

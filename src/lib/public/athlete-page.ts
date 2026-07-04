@@ -6,7 +6,7 @@ import { events } from "@/db/schema/event";
 import { placements } from "@/db/schema/placement";
 import { athleteTeamMemberships } from "@/db/schema/membership";
 import { teams } from "@/db/schema/team";
-import { videos, type Video } from "@/db/schema/video";
+import { videos } from "@/db/schema/video";
 import {
   listInstructionalsForAthlete,
 } from "@/lib/instructionals/service";
@@ -15,6 +15,8 @@ import type { Instructional } from "@/db/schema/instructional";
 type Outcome = "WON" | "LOST" | "DRAW" | "NC" | "DQ";
 
 export type OpponentRef = { id: string; name: string; slug: string };
+
+export type VideoRef = { id: string; url: string; title: string | null };
 
 export type MatchHistoryEntry = {
   matchId: string;
@@ -27,6 +29,7 @@ export type MatchHistoryEntry = {
   methodDetail: string | null;
   outcome: Outcome;
   opponents: OpponentRef[];
+  videos: VideoRef[];
 };
 
 export type AthleteRecord = {
@@ -53,7 +56,7 @@ export type AthletePage = {
   matchHistory: MatchHistoryEntry[];
   placements: PlacementEntry[];
   teamTimeline: TeamTimelineEntry[];
-  videos: Video[];
+  videos: VideoRef[];
   instructionals: Instructional[];
   rivalries: Rivalry[];
 };
@@ -121,6 +124,21 @@ export async function getAthletePage(
     opponentsByMatch.set(r.matchId, list);
   }
 
+  // Videos on those matches, grouped by match so each history row carries its own
+  // watch links (and reused for the athlete's full video library below).
+  const matchVideoRows = matchIds.length
+    ? await db
+        .select({ id: videos.id, matchId: videos.matchId, url: videos.url, title: videos.title })
+        .from(videos)
+        .where(inArray(videos.matchId, matchIds))
+    : [];
+  const videosByMatch = new Map<string, VideoRef[]>();
+  for (const v of matchVideoRows) {
+    const list = videosByMatch.get(v.matchId) ?? [];
+    list.push({ id: v.id, url: v.url, title: v.title });
+    videosByMatch.set(v.matchId, list);
+  }
+
   const matchHistory: MatchHistoryEntry[] = own
     .map((r) => ({
       matchId: r.matchId,
@@ -133,6 +151,7 @@ export async function getAthletePage(
       methodDetail: r.methodDetail,
       outcome: r.outcome as Outcome,
       opponents: opponentsByMatch.get(r.matchId) ?? [],
+      videos: videosByMatch.get(r.matchId) ?? [],
     }))
     .sort((a, b) => b.date.localeCompare(a.date));
 
@@ -205,19 +224,11 @@ export async function getAthletePage(
     .where(eq(athleteTeamMemberships.athleteId, athlete.id));
   const teamTimeline = timelineRows.sort(byRecencyCurrentFirst);
 
-  // Video library: videos on the athlete's published matches.
-  const videoRows = matchIds.length
-    ? await db
-        .select({ video: videos })
-        .from(videos)
-        .innerJoin(matchCompetitors, eq(videos.matchId, matchCompetitors.matchId))
-        .innerJoin(
-          matches,
-          and(eq(videos.matchId, matches.id), eq(matches.status, "published")),
-        )
-        .where(eq(matchCompetitors.athleteId, athlete.id))
-    : [];
-  const videoList = videoRows.map((r) => r.video);
+  // Full video library = every video across the athlete's published matches
+  // (already fetched above for the per-row watch links).
+  const videoList: VideoRef[] = matchVideoRows.map((v) => ({
+    id: v.id, url: v.url, title: v.title,
+  }));
 
   const instructionals = await listInstructionalsForAthlete(db, athlete.id);
 

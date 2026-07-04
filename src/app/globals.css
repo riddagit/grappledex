@@ -80,6 +80,17 @@ a { color: inherit; }
 .eyebrow a { text-decoration: none; border-bottom: 1px solid var(--line-strong); }
 .eyebrow a:hover { color: var(--ink); border-color: var(--accent); }
 
+/* ---- identity header: optional portrait + name ---- */
+.idhead { display: flex; gap: clamp(1rem, 3vw, 2rem); align-items: flex-end; }
+.portrait {
+  width: clamp(5rem, 18vw, 9rem);
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+
 /* ---- the name: the human voice ---- */
 .athlete-name {
   font-family: var(--font-name);
@@ -173,6 +184,12 @@ table.history tr:hover td { background: color-mix(in srgb, var(--ink) 4%, transp
 .res.l { color: var(--faint); }
 .res.d { color: var(--muted); }
 .method.sub { color: var(--accent); }
+td.watch a {
+  color: var(--accent); text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+td.watch a:hover { border-color: var(--accent); }
+td.watch .none { color: var(--faint); }
 .opp { font-family: var(--font-name); }
 .opp a { text-decoration: none; border-bottom: 1px solid var(--line-strong); }
 .opp a:hover { border-color: var(--accent); }

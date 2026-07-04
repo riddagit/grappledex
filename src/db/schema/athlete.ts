@@ -7,6 +7,9 @@ export const athletes = pgTable("athletes", {
   slug: text("slug").notNull().unique(),
   fullName: text("full_name").notNull(),
   nationality: text("nationality"),
+  // Provision for imagery (v1 links, never re-hosts): URL of an official/external
+  // portrait. Nullable — the page degrades to a text-first header when absent.
+  imageUrl: text("image_url"),
   status: text("status", { enum: ["draft", "published"] })
     .notNull()
     .default("draft"),

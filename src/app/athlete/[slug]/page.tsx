@@ -63,8 +63,8 @@ export default async function AthletePublicPage(
 
 function Header({ page }: { page: AthletePage }) {
   const current = page.teamTimeline.find((t) => t.endDate === null);
-  return (
-    <header>
+  const identity = (
+    <div>
       <div className="eyebrow">
         <span>{page.athlete.nationality ?? "—"}</span>
         {current && (
@@ -75,6 +75,20 @@ function Header({ page }: { page: AthletePage }) {
         )}
       </div>
       <h1 className="athlete-name">{page.athlete.fullName}</h1>
+    </div>
+  );
+  // Portrait is optional: when no image is on file the header stays text-first.
+  return (
+    <header>
+      {page.athlete.imageUrl ? (
+        <div className="idhead">
+          {/* eslint-disable-next-line @next/next/no-img-element -- v1 links external images, never re-hosts */}
+          <img className="portrait" src={page.athlete.imageUrl} alt={page.athlete.fullName} />
+          {identity}
+        </div>
+      ) : (
+        identity
+      )}
     </header>
   );
 }
@@ -138,7 +152,7 @@ function History({ page }: { page: AthletePage }) {
           <table className="history">
             <thead>
               <tr>
-                <th>Year</th><th>Event</th><th>Res</th><th>Opponent</th><th>Method</th>
+                <th>Year</th><th>Event</th><th>Res</th><th>Opponent</th><th>Method</th><th>Watch</th>
               </tr>
             </thead>
             <tbody>
@@ -159,6 +173,20 @@ function History({ page }: { page: AthletePage }) {
                   </td>
                   <td className={`method ${m.method === "SUBMISSION" ? "sub" : ""}`}>
                     {methodLabel(m.method, m.methodDetail)}
+                  </td>
+                  <td className="watch">
+                    {m.videos.length === 0 ? (
+                      <span className="none">—</span>
+                    ) : (
+                      m.videos.map((v, i) => (
+                        <span key={v.id}>
+                          {i > 0 ? " · " : ""}
+                          <a href={v.url} target="_blank" rel="noreferrer">
+                            {m.videos.length > 1 ? `Watch ${i + 1}` : "Watch"} ↗
+                          </a>
+                        </span>
+                      ))
+                    )}
                   </td>
                 </tr>
               ))}
