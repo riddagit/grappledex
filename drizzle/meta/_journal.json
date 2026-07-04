@@ -29,6 +29,13 @@
       "when": 1783132760166,
       "tag": "0003_mighty_violations",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1783132895621,
+      "tag": "0004_smart_absorbing_man",
+      "breakpoints": true
     }
   ]
 }
