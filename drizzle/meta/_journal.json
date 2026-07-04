@@ -22,6 +22,13 @@
       "when": 1783132653483,
       "tag": "0002_productive_jackpot",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1783132760166,
+      "tag": "0003_mighty_violations",
+      "breakpoints": true
     }
   ]
 }
