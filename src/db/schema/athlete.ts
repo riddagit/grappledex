@@ -1,6 +1,8 @@
 import {
   pgTable, uuid, text, timestamp, index,
 } from "drizzle-orm/pg-core";
+import { sql, type SQL } from "drizzle-orm";
+import { tsvector } from "./tsvector";
 
 export const athletes = pgTable("athletes", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -25,7 +27,10 @@ export const athletes = pgTable("athletes", {
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
-});
+  searchVector: tsvector("search_vector").generatedAlwaysAs(
+    (): SQL => sql`to_tsvector('simple', coalesce(${athletes.fullName}, ''))`,
+  ),
+}, (t) => [index("athletes_search_idx").using("gin", t.searchVector)]);
 
 export const athleteAliases = pgTable(
   "athlete_aliases",
@@ -35,8 +40,14 @@ export const athleteAliases = pgTable(
       .notNull()
       .references(() => athletes.id, { onDelete: "cascade" }),
     alias: text("alias").notNull(),
+    searchVector: tsvector("search_vector").generatedAlwaysAs(
+      (): SQL => sql`to_tsvector('simple', coalesce(${athleteAliases.alias}, ''))`,
+    ),
   },
-  (t) => [index("athlete_aliases_athlete_id_idx").on(t.athleteId)],
+  (t) => [
+    index("athlete_aliases_athlete_id_idx").on(t.athleteId),
+    index("athlete_aliases_search_idx").using("gin", t.searchVector),
+  ],
 );
 
 export type Athlete = typeof athletes.$inferSelect;
