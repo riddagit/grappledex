@@ -9,6 +9,7 @@ import {
 export type CreateAthleteInput = {
   fullName: string;
   nationality?: string;
+  imageUrl?: string;
   aliases?: string[];
   sourceUrl?: string;
   verifiedBy?: string;
@@ -63,6 +64,7 @@ export async function createAthlete(
       slug,
       fullName: input.fullName,
       nationality: input.nationality ?? null,
+      imageUrl: input.imageUrl ?? null,
       status: input.status ?? "draft",
       sourceUrl: input.sourceUrl ?? null,
       verifiedBy: input.verifiedBy ?? null,
