@@ -25,12 +25,13 @@ Drizzle. Phase A builds the data core + admin write-path before any public pages
       services (transactional `createMatch`, derived `athleteRecord`), event-centric admin
       entry flow. Executed inline (6 tasks, TDD, commit per task); feature branch deleted.
 
-## Current state (Phase A.2 complete + merged)
+## Current state (Phase A.2 complete + merged + pushed)
 
-- On `master`, HEAD `e26edb9`. Working tree clean.
+- Single canonical branch **`main`**, HEAD `029e039`, **pushed to `origin/main`**. Working
+  tree clean. Local `master` and the old feature branches were consolidated into `main`;
+  redundant `origin/master` and stale `origin/phase-a1-athlete-core` were deleted. `origin`
+  now has exactly one branch: `main`.
 - **51/51 tests pass; `tsc --noEmit` clean; `next build` succeeds** on the merged result.
-- Merge stayed **local only** — not pushed. `origin/master` untouched; stale remote
-  branches `origin/phase-a1-athlete-core` and `origin/phase-a2-competition-core` can be pruned.
 - Build note: route Zod schemas live in sibling `validation.ts` files (not exported from
   `route.ts`) — Next 15 App Router forbids non-handler route exports. Follow this pattern
   for any new admin route.
@@ -38,7 +39,7 @@ Drizzle. Phase A builds the data core + admin write-path before any public pages
 ## To resume (Phase A.2 done — next is a new phase)
 
 1. Read this file + the v1 design spec.
-2. Optionally push `master` to origin and prune the stale remote feature branches.
+2. Work on `main` (or a feature branch off it); it's the single source of truth, local + remote.
 3. Start the next phase, beginning with superpowers:brainstorming. Candidates per the v1
    spec §7 roadmap: **Phase A.3** (Team + temporal AthleteTeamMembership; `change_log`
    audit + created_by/updated_by; edit/update paths) or **Phase B** (public server-rendered
@@ -46,7 +47,6 @@ Drizzle. Phase A builds the data core + admin write-path before any public pages
 
 ## Not-yet-done / open items
 
-- Push `master` to origin (merge is local-only) + prune remote feature branches.
 - **Manual UI browser check never run** (both phases) — needs a live DATABASE_URL
   (`npm run db:migrate` + `npm run dev`; visit `/admin/promotions/new` → `/admin/events/new`
   → `/admin/events/[id]`). Automated `next build` passes as a proxy, but no live DB round-trip.
@@ -55,4 +55,4 @@ Drizzle. Phase A builds the data core + admin write-path before any public pages
   integration tests (only Zod schemas tested), `updatedAt` auto-bump, and hardening
   `weight_class`/`ruleset` into lookup tables once real data spread is visible.
 
-_Last updated: 2026-07-04, Phase A.2 merged to master (local); ready for next phase._
+_Last updated: 2026-07-04, Phase A.2 merged + consolidated onto `main` and pushed to origin; ready for next phase._
