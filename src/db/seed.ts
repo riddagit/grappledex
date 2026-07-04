@@ -63,7 +63,7 @@ export async function seed(db: Db) {
   });
 
   // Bracket final: Gordon def. Meregali by submission.
-  await createMatch(db, {
+  const final = await createMatch(db, {
     eventId: event.id,
     matchType: "BRACKET",
     round: "Final",
@@ -107,5 +107,6 @@ export async function seed(db: Db) {
     promotion: adcc,
     event,
     team,
+    matches: { superfight, final },
   };
 }
