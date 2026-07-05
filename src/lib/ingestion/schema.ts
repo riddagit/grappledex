@@ -1,0 +1,59 @@
+import { z } from "zod";
+
+export const AthleteCandidateSchema = z.object({
+  localRef: z.string().min(1),
+  fullName: z.string().min(1),
+  nationality: z.string().nullable().optional(),
+  aliases: z.array(z.string().min(1)).optional(),
+});
+
+export const PromotionCandidateSchema = z.object({
+  localRef: z.string().min(1),
+  name: z.string().min(1),
+  shortName: z.string().nullable().optional(),
+});
+
+export const EventCandidateSchema = z.object({
+  localRef: z.string().min(1),
+  promotionRef: z.string().min(1),
+  name: z.string().min(1),
+  startDate: z.string().min(1), // YYYY-MM-DD
+  endDate: z.string().nullable().optional(),
+  venue: z.string().nullable().optional(),
+  location: z.string().nullable().optional(),
+});
+
+export const MatchCompetitorCandidateSchema = z.object({
+  athleteRef: z.string().min(1),
+  outcome: z.enum(["WON", "LOST", "DRAW", "NC", "DQ"]),
+  slotOrder: z.number().int().nullable().optional(),
+});
+
+export const MatchCandidateSchema = z.object({
+  localRef: z.string().min(1),
+  eventRef: z.string().min(1),
+  matchType: z.enum(["BRACKET", "SUPERFIGHT", "TRIAL", "ALTERNATE"]),
+  round: z.string().nullable().optional(),
+  weightClass: z.string().nullable().optional(),
+  ruleset: z.string().nullable().optional(),
+  method: z.enum([
+    "SUBMISSION", "POINTS", "DECISION", "DQ",
+    "OVERTIME", "FORFEIT", "NC", "DRAW",
+  ]),
+  methodDetail: z.string().nullable().optional(),
+  durationSeconds: z.number().int().nullable().optional(),
+  competitors: z.array(MatchCompetitorCandidateSchema),
+});
+
+export const ExtractionSchema = z.object({
+  athletes: z.array(AthleteCandidateSchema),
+  promotions: z.array(PromotionCandidateSchema),
+  events: z.array(EventCandidateSchema),
+  matches: z.array(MatchCandidateSchema),
+});
+
+export type CandidateGraph = z.infer<typeof ExtractionSchema>;
+export type AthleteCandidate = z.infer<typeof AthleteCandidateSchema>;
+export type PromotionCandidate = z.infer<typeof PromotionCandidateSchema>;
+export type EventCandidate = z.infer<typeof EventCandidateSchema>;
+export type MatchCandidate = z.infer<typeof MatchCandidateSchema>;
