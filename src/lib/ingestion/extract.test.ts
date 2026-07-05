@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { FakeExtractor, type Extractor } from "@/lib/ingestion/extract";
+import { FakeExtractor, EXTRACTION_SYSTEM_PROMPT, type Extractor } from "@/lib/ingestion/extract";
 import { ExtractionSchema, type CandidateGraph } from "@/lib/ingestion/schema";
 
 const graph: CandidateGraph = {
@@ -18,5 +18,11 @@ describe("FakeExtractor", () => {
     const extractor: Extractor = new FakeExtractor(graph);
     const out = await extractor.extract("ignored text");
     expect(ExtractionSchema.parse(out)).toEqual(graph);
+  });
+});
+
+describe("EXTRACTION_SYSTEM_PROMPT", () => {
+  it("instructs the model to emit placements", () => {
+    expect(EXTRACTION_SYSTEM_PROMPT).toMatch(/placement/i);
   });
 });
