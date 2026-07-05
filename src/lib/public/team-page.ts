@@ -6,7 +6,7 @@ import { athletes } from "@/db/schema/athlete";
 
 export type RosterMember = {
   athleteId: string; name: string; slug: string;
-  role: string | null; startDate: string; endDate: string | null;
+  role: string | null; startDate: string | null; endDate: string | null;
 };
 export type TeamPage = { team: Team; current: RosterMember[]; alumni: RosterMember[] };
 

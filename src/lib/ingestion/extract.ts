@@ -16,17 +16,22 @@ export class FakeExtractor implements Extractor {
 
 export const EXTRACTION_SYSTEM_PROMPT = [
   "You extract structured BJJ / no-gi grappling records from pasted text.",
-  "Return athletes, promotions, events, matches, placements, and videos you can find.",
-  "Give every entity a short unique localRef (e.g. a1, p1, e1, m1, pl1, v1).",
-  "Matches reference their event via eventRef and each competitor via athleteRef;",
-  "events reference their promotion via promotionRef; placements reference their",
-  "event via eventRef and athlete via athleteRef; videos reference their match via",
-  "matchRef — always use the localRefs of entities you also returned. A placement",
-  "records that an athlete finished in a given division/weight class at a given",
-  "place (1 = champion, 2 = runner-up, 3 = third). A video is a link to footage of",
-  "a specific match: include one only when the text gives an actual video URL, with",
-  "that url and an optional title. Dates are YYYY-MM-DD. Only include facts present",
-  "in the text; do not invent competitors, methods, placements, video URLs, or dates.",
+  "Return athletes, promotions, teams, events, matches, placements, videos, and",
+  "team memberships you can find. Give every entity a short unique localRef (e.g.",
+  "a1, p1, t1, e1, m1, pl1, v1, mb1). Matches reference their event via eventRef and",
+  "each competitor via athleteRef; events reference their promotion via promotionRef;",
+  "placements reference their event via eventRef and athlete via athleteRef; videos",
+  "reference their match via matchRef; memberships reference their athlete via",
+  "athleteRef and their team via teamRef — always use the localRefs of entities you",
+  "also returned. A placement records that an athlete finished in a given",
+  "division/weight class at a given place (1 = champion, 2 = runner-up, 3 = third).",
+  "A video is a link to footage of a specific match: include one only when the text",
+  "gives an actual video URL, with that url and an optional title. A team is a",
+  "gym/academy an athlete trains for; a membership links an athlete to a team, with",
+  "an optional role, startDate, and endDate — omit startDate/endDate when the text",
+  "does not state them (do not guess). Dates are YYYY-MM-DD. Only include facts",
+  "present in the text; do not invent competitors, methods, placements, video URLs,",
+  "teams, memberships, or dates.",
 ].join(" ");
 
 /**

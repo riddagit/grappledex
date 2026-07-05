@@ -1,12 +1,15 @@
 import type { Db } from "@/db/client";
 import { promotions } from "@/db/schema/promotion";
+import { teams } from "@/db/schema/team";
 import { events } from "@/db/schema/event";
 import { findAthleteDuplicates } from "@/lib/athletes/service";
 import { normalizeName } from "@/lib/identity/normalize";
 import type { CandidateGraph } from "@/lib/ingestion/schema";
 
 export type ResolvedCandidate = {
-  entityType: "athlete" | "promotion" | "event" | "match" | "placement" | "video";
+  entityType:
+    | "athlete" | "promotion" | "team" | "event" | "match"
+    | "placement" | "video" | "membership";
   localRef: string;
   payload: unknown;
   resolvedEntityId: string | null;
@@ -47,6 +50,23 @@ export async function resolveCandidates(
       payload: p,
       resolvedEntityId: hit?.id ?? null,
       resolvedEntityType: hit ? "promotion" : null,
+      matchScore: hit ? 1 : null,
+    });
+  }
+
+  // Teams: exact normalized-name match.
+  const teamRows = await db
+    .select({ id: teams.id, name: teams.name })
+    .from(teams);
+  for (const t of graph.teams) {
+    const target = normalizeName(t.name);
+    const hit = teamRows.find((r) => normalizeName(r.name) === target);
+    out.push({
+      entityType: "team",
+      localRef: t.localRef,
+      payload: t,
+      resolvedEntityId: hit?.id ?? null,
+      resolvedEntityType: hit ? "team" : null,
       matchScore: hit ? 1 : null,
     });
   }
@@ -98,6 +118,18 @@ export async function resolveCandidates(
       entityType: "video",
       localRef: v.localRef,
       payload: v,
+      resolvedEntityId: null,
+      resolvedEntityType: null,
+      matchScore: null,
+    });
+  }
+
+  // Memberships: athlete↔team edges — no resolution proposal in v1.
+  for (const mb of graph.memberships) {
+    out.push({
+      entityType: "membership",
+      localRef: mb.localRef,
+      payload: mb,
       resolvedEntityId: null,
       resolvedEntityType: null,
       matchScore: null,

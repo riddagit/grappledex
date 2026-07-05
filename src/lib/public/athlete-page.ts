@@ -43,7 +43,7 @@ export type PlacementEntry = {
 
 export type TeamTimelineEntry = {
   teamName: string; teamSlug: string; role: string | null;
-  startDate: string; endDate: string | null;
+  startDate: string | null; endDate: string | null;
 };
 
 export type Rivalry = { opponent: OpponentRef; meetings: number };
@@ -63,10 +63,13 @@ export type AthletePage = {
 
 // Current membership (null endDate) first, then most recent start first.
 function byRecencyCurrentFirst(
-  a: { startDate: string; endDate: string | null },
-  b: { startDate: string; endDate: string | null },
+  a: { startDate: string | null; endDate: string | null },
+  b: { startDate: string | null; endDate: string | null },
 ): number {
   if ((a.endDate === null) !== (b.endDate === null)) return a.endDate === null ? -1 : 1;
+  if (a.startDate === b.startDate) return 0;
+  if (a.startDate === null) return 1;
+  if (b.startDate === null) return -1;
   return b.startDate.localeCompare(a.startDate);
 }
 

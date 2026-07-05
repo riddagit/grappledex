@@ -13,6 +13,12 @@ export const PromotionCandidateSchema = z.object({
   shortName: z.string().nullable().optional(),
 });
 
+export const TeamCandidateSchema = z.object({
+  localRef: z.string().min(1),
+  name: z.string().min(1),
+  shortName: z.string().nullable().optional(),
+});
+
 export const EventCandidateSchema = z.object({
   localRef: z.string().min(1),
   promotionRef: z.string().min(1),
@@ -60,18 +66,31 @@ export const VideoCandidateSchema = z.object({
   title: z.string().nullable().optional(),
 });
 
+export const MembershipCandidateSchema = z.object({
+  localRef: z.string().min(1),
+  athleteRef: z.string().min(1),
+  teamRef: z.string().min(1),
+  role: z.string().nullable().optional(),
+  startDate: z.string().min(1).nullable().optional(), // YYYY-MM-DD or omitted
+  endDate: z.string().min(1).nullable().optional(),
+});
+
 export const ExtractionSchema = z.object({
   athletes: z.array(AthleteCandidateSchema),
   promotions: z.array(PromotionCandidateSchema),
+  teams: z.array(TeamCandidateSchema),
   events: z.array(EventCandidateSchema),
   matches: z.array(MatchCandidateSchema),
   placements: z.array(PlacementCandidateSchema),
   videos: z.array(VideoCandidateSchema),
+  memberships: z.array(MembershipCandidateSchema),
 });
 
 export type CandidateGraph = z.infer<typeof ExtractionSchema>;
 export type AthleteCandidate = z.infer<typeof AthleteCandidateSchema>;
 export type PromotionCandidate = z.infer<typeof PromotionCandidateSchema>;
+export type TeamCandidate = z.infer<typeof TeamCandidateSchema>;
+export type MembershipCandidate = z.infer<typeof MembershipCandidateSchema>;
 export type EventCandidate = z.infer<typeof EventCandidateSchema>;
 export type MatchCandidate = z.infer<typeof MatchCandidateSchema>;
 export type PlacementCandidate = z.infer<typeof PlacementCandidateSchema>;

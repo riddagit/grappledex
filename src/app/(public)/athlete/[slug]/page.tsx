@@ -228,7 +228,7 @@ function TeamTimeline({ page }: { page: AthletePage }) {
             {t.role ? ` · ${t.role}` : ""}
             {" · "}
             <span className={t.endDate === null ? "now" : ""}>
-              {t.startDate}–{t.endDate ?? "present"}
+              {t.startDate ?? "unknown"}–{t.endDate ?? "present"}
             </span>
           </div>
         ))}

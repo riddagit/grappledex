@@ -12,6 +12,7 @@ import { ExtractionSchema, type CandidateGraph } from "@/lib/ingestion/schema";
 const graph: CandidateGraph = {
   athletes: [{ localRef: "a1", fullName: "Gordon Ryan" }],
   promotions: [{ localRef: "p1", name: "ADCC" }],
+  teams: [],
   events: [{ localRef: "e1", promotionRef: "p1", name: "ADCC 2022", startDate: "2022-09-17" }],
   matches: [{
     localRef: "m1", eventRef: "e1", matchType: "SUPERFIGHT", method: "DECISION",
@@ -19,6 +20,7 @@ const graph: CandidateGraph = {
   }],
   placements: [],
   videos: [{ localRef: "v1", matchRef: "m1", url: "https://youtu.be/abc" }],
+  memberships: [],
 };
 
 describe("FakeExtractor", () => {
@@ -36,6 +38,11 @@ describe("EXTRACTION_SYSTEM_PROMPT", () => {
 
   it("instructs the model to emit videos", () => {
     expect(EXTRACTION_SYSTEM_PROMPT).toMatch(/video/i);
+  });
+
+  it("instructs the model to emit teams and memberships", () => {
+    expect(EXTRACTION_SYSTEM_PROMPT).toMatch(/team/i);
+    expect(EXTRACTION_SYSTEM_PROMPT).toMatch(/membership/i);
   });
 });
 

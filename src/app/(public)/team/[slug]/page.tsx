@@ -47,7 +47,7 @@ function Roster({ title, members }: { title: string; members: RosterMember[] }) 
             {m.role ? ` · ${m.role}` : ""}
             {" · "}
             <span className={m.endDate === null ? "now" : ""}>
-              {m.startDate}–{m.endDate ?? "present"}
+              {m.startDate ?? "unknown"}–{m.endDate ?? "present"}
             </span>
           </div>
         ))}

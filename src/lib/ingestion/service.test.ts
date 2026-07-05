@@ -10,6 +10,8 @@ import { athletes } from "@/db/schema/athlete";
 import { matches, matchCompetitors } from "@/db/schema/match";
 import { placements } from "@/db/schema/placement";
 import { videos } from "@/db/schema/video";
+import { teams } from "@/db/schema/team";
+import { athleteTeamMemberships } from "@/db/schema/membership";
 import { createAthlete } from "@/lib/athletes/service";
 
 let ctx: Awaited<ReturnType<typeof createTestDb>>;
@@ -22,6 +24,7 @@ const graph: CandidateGraph = {
     { localRef: "a2", fullName: "Andre Galvao" },
   ],
   promotions: [{ localRef: "p1", name: "ADCC", shortName: "ADCC" }],
+  teams: [{ localRef: "t1", name: "New Wave Jiu-Jitsu", shortName: "New Wave" }],
   events: [
     { localRef: "e1", promotionRef: "p1", name: "ADCC 2022", startDate: "2022-09-17" },
   ],
@@ -37,6 +40,10 @@ const graph: CandidateGraph = {
   ],
   videos: [
     { localRef: "v1", matchRef: "m1", url: "https://youtu.be/abc", title: "Ryan vs Galvao" },
+  ],
+  // No startDate: exercises the nullable start_date + NULLS NOT DISTINCT path.
+  memberships: [
+    { localRef: "mb1", athleteRef: "a1", teamRef: "t1", role: "black belt" },
   ],
 };
 
@@ -56,14 +63,18 @@ describe("ingestion service", () => {
     const batch = await extractAll();
     const loaded = (await getBatch(ctx.db, batch.id))!;
     expect(loaded.batch.status).toBe("review");
-    expect(loaded.candidates).toHaveLength(7); // 2 athletes, 1 promo, 1 event, 1 match, 1 placement, 1 video
+    // 2 athletes, 1 promo, 1 team, 1 event, 1 match, 1 placement, 1 video, 1 membership
+    expect(loaded.candidates).toHaveLength(9);
   });
 
   it("commitBatch writes draft/NEEDS_REVIEW rows and links match competitors", async () => {
     const batch = await extractAll();
     await acceptAll(batch.id);
     const counts = await commitBatch(ctx.db, batch.id);
-    expect(counts).toEqual({ promotions: 1, events: 1, athletes: 2, matches: 1, placements: 1, videos: 1 });
+    expect(counts).toEqual({
+      promotions: 1, teams: 1, events: 1, athletes: 2,
+      matches: 1, placements: 1, videos: 1, memberships: 1,
+    });
 
     const athleteRows = await ctx.db.select().from(athletes);
     expect(athleteRows).toHaveLength(2);
@@ -213,5 +224,57 @@ describe("ingestion service", () => {
 
     const videoRows = await ctx.db.select().from(videos);
     expect(videoRows).toHaveLength(1);
+  });
+
+  it("commits a team and a membership linking the athlete and team (null start date)", async () => {
+    const batch = await extractAll();
+    await acceptAll(batch.id);
+    await commitBatch(ctx.db, batch.id);
+
+    const teamRows = await ctx.db.select().from(teams);
+    expect(teamRows).toHaveLength(1);
+    expect(teamRows[0]!.name).toBe("New Wave Jiu-Jitsu");
+
+    const membershipRows = await ctx.db.select().from(athleteTeamMemberships);
+    expect(membershipRows).toHaveLength(1);
+    expect(membershipRows[0]!.startDate).toBeNull();
+    expect(membershipRows[0]!.role).toBe("black belt");
+    expect(membershipRows[0]!.teamId).toBe(teamRows[0]!.id);
+
+    const athleteRows = await ctx.db.select().from(athletes);
+    const gordon = athleteRows.find((a) => a.fullName === "Gordon Ryan")!;
+    expect(membershipRows[0]!.athleteId).toBe(gordon.id);
+  });
+
+  it("rejects the commit when a membership references a rejected team", async () => {
+    const batch = await extractAll();
+    const loaded = (await getBatch(ctx.db, batch.id))!;
+    for (const c of loaded.candidates) {
+      await setDecision(ctx.db, c.id, c.entityType === "team" ? "reject" : "accept");
+    }
+    await expect(commitBatch(ctx.db, batch.id)).rejects.toThrow(
+      /membership mb1 references uncommitted team ref/,
+    );
+  });
+
+  it("skips a duplicate dateless membership instead of aborting the commit", async () => {
+    // First batch commits the membership (athlete + team + null start date).
+    const first = await extractAll();
+    await acceptAll(first.id);
+    await commitBatch(ctx.db, first.id);
+
+    // Re-ingest: merge every entity that resolves to an existing row, so the
+    // membership points at the same athlete + team + null start date. The
+    // (athlete, team, start_date) NULLS NOT DISTINCT unique must skip it.
+    const second = await extractAll();
+    const loaded = (await getBatch(ctx.db, second.id))!;
+    for (const c of loaded.candidates) {
+      await setDecision(ctx.db, c.id, c.resolvedEntityId ? "merge" : "accept");
+    }
+    const counts = await commitBatch(ctx.db, second.id);
+    expect(counts.memberships).toBe(0);
+
+    const membershipRows = await ctx.db.select().from(athleteTeamMemberships);
+    expect(membershipRows).toHaveLength(1);
   });
 });

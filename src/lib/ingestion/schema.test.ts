@@ -7,6 +7,7 @@ const sample = {
     { localRef: "a2", fullName: "Andre Galvao" },
   ],
   promotions: [{ localRef: "p1", name: "ADCC", shortName: "ADCC" }],
+  teams: [{ localRef: "t1", name: "New Wave Jiu-Jitsu", shortName: "New Wave" }],
   events: [
     { localRef: "e1", promotionRef: "p1", name: "ADCC 2022", startDate: "2022-09-17" },
   ],
@@ -24,6 +25,9 @@ const sample = {
   ],
   videos: [
     { localRef: "v1", matchRef: "m1", url: "https://youtu.be/abc", title: "Ryan vs Galvao" },
+  ],
+  memberships: [
+    { localRef: "mb1", athleteRef: "a1", teamRef: "t1", role: "black belt", startDate: "2021-01-01" },
   ],
 };
 
@@ -70,5 +74,20 @@ describe("ExtractionSchema", () => {
     const bad = structuredClone(sample);
     bad.videos[0]!.url = "";
     expect(ExtractionSchema.safeParse(bad).success).toBe(false);
+  });
+
+  it("parses teams and memberships referencing an athlete and team", () => {
+    const parsed = ExtractionSchema.parse(sample);
+    expect(parsed.teams[0]?.name).toBe("New Wave Jiu-Jitsu");
+    expect(parsed.memberships[0]?.athleteRef).toBe("a1");
+    expect(parsed.memberships[0]?.teamRef).toBe("t1");
+  });
+
+  it("parses a membership with an omitted start date", () => {
+    const parsed = ExtractionSchema.parse({
+      ...sample,
+      memberships: [{ localRef: "mb1", athleteRef: "a1", teamRef: "t1" }],
+    });
+    expect(parsed.memberships[0]?.startDate).toBeUndefined();
   });
 });

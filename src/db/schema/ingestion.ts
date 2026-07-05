@@ -27,7 +27,7 @@ export const ingestionCandidates = pgTable(
       .notNull()
       .references(() => ingestionBatches.id, { onDelete: "cascade" }),
     entityType: text("entity_type", {
-      enum: ["athlete", "promotion", "event", "match", "placement", "video"],
+      enum: ["athlete", "promotion", "team", "event", "match", "placement", "video", "membership"],
     }).notNull(),
     payload: jsonb("payload").notNull(),
     localRef: text("local_ref").notNull(),
