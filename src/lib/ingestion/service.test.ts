@@ -278,3 +278,23 @@ describe("ingestion service", () => {
     expect(membershipRows).toHaveLength(1);
   });
 });
+
+describe("commitBatch provenance from sourceUrl", () => {
+  it("carries the batch sourceUrl into created rows' sourceUrl", async () => {
+    const url = "https://example.com/adcc-2022-recap";
+    const batch = await createBatch(ctx.db, { sourceText: "ignored", sourceUrl: url });
+    await runExtraction(ctx.db, new FakeExtractor(graph), batch.id);
+
+    const loaded = await getBatch(ctx.db, batch.id);
+    for (const c of loaded!.candidates) {
+      await setDecision(ctx.db, c.id, "accept");
+    }
+    await commitBatch(ctx.db, batch.id);
+
+    const [gordon] = await ctx.db
+      .select()
+      .from(athletes)
+      .where(eq(athletes.fullName, "Gordon Ryan"));
+    expect(gordon.sourceUrl).toBe(url);
+  });
+});

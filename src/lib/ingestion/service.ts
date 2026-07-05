@@ -24,13 +24,14 @@ import { addMembership } from "@/lib/memberships/service";
 
 export async function createBatch(
   db: Db,
-  input: { sourceText: string; sourceNote?: string; createdBy?: string },
+  input: { sourceText: string; sourceNote?: string; sourceUrl?: string; createdBy?: string },
 ): Promise<IngestionBatch> {
   const rows = await db
     .insert(ingestionBatches)
     .values({
       sourceText: input.sourceText,
       sourceNote: input.sourceNote ?? null,
+      sourceUrl: input.sourceUrl ?? null,
       createdBy: input.createdBy ?? null,
     })
     .returning();
@@ -123,7 +124,7 @@ export async function commitBatch(
     status: "draft" as const,
     confidence: "NEEDS_REVIEW" as const,
     verifiedBy: batch.createdBy ?? undefined,
-    sourceUrl: batch.sourceNote ?? undefined,
+    sourceUrl: batch.sourceUrl ?? batch.sourceNote ?? undefined,
   };
 
   const committable = (c: IngestionCandidate) =>
