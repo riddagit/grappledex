@@ -53,7 +53,7 @@ describe("ExtractionSchema", () => {
 
   it("rejects a placement with a non-positive place", () => {
     const bad = structuredClone(sample);
-    bad.placements[0].place = 0;
+    bad.placements[0]!.place = 0;
     expect(ExtractionSchema.safeParse(bad).success).toBe(false);
   });
 });
