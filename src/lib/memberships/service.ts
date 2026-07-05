@@ -10,7 +10,7 @@ export type AddMembershipInput = {
   athleteId: string;
   teamId: string;
   role?: string;
-  startDate: string;
+  startDate?: string | null;
   endDate?: string;
   sourceUrl?: string;
   verifiedBy?: string;
@@ -28,7 +28,7 @@ export type RosterEntry = {
   fullName: string;
   slug: string;
   role: string | null;
-  startDate: string;
+  startDate: string | null;
   endDate: string | null;
 };
 
@@ -42,7 +42,7 @@ export async function addMembership(
       athleteId: input.athleteId,
       teamId: input.teamId,
       role: input.role ?? null,
-      startDate: input.startDate,
+      startDate: input.startDate ?? null,
       endDate: input.endDate ?? null,
       sourceUrl: input.sourceUrl ?? null,
       verifiedBy: input.verifiedBy ?? null,
@@ -70,14 +70,18 @@ export async function endMembership(
   return membership;
 }
 
-// Sort key: current memberships (null endDate) first, then most recent start first.
+// Sort key: current memberships (null endDate) first, then most recent start
+// first, with unknown (null) start dates sorted last within each group.
 function byRecencyCurrentFirst(
-  a: { startDate: string; endDate: string | null },
-  b: { startDate: string; endDate: string | null },
+  a: { startDate: string | null; endDate: string | null },
+  b: { startDate: string | null; endDate: string | null },
 ): number {
   if ((a.endDate === null) !== (b.endDate === null)) {
     return a.endDate === null ? -1 : 1;
   }
+  if (a.startDate === b.startDate) return 0;
+  if (a.startDate === null) return 1;
+  if (b.startDate === null) return -1;
   return b.startDate.localeCompare(a.startDate);
 }
 

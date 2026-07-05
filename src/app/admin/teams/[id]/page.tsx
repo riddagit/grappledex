@@ -11,7 +11,7 @@ function RosterList({ entries }: { entries: RosterEntry[] }) {
         <li key={r.membershipId}>
           {r.fullName}
           {r.role ? ` · ${r.role}` : ""}
-          {" · "}{r.startDate}–{r.endDate ?? "present"}
+          {" · "}{r.startDate ?? "unknown"}–{r.endDate ?? "present"}
         </li>
       ))}
     </ul>

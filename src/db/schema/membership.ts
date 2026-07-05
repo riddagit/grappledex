@@ -15,7 +15,10 @@ export const athleteTeamMemberships = pgTable(
       .notNull()
       .references(() => teams.id),
     role: text("role"),
-    startDate: date("start_date").notNull(),
+    // Nullable: articles rarely state when an athlete joined a team. The unique
+    // constraint below uses NULLS NOT DISTINCT so one unknown-date membership per
+    // athlete+team still dedups (Postgres 15+).
+    startDate: date("start_date"),
     endDate: date("end_date"),
     sourceUrl: text("source_url"),
     verifiedBy: text("verified_by"),
@@ -35,7 +38,7 @@ export const athleteTeamMemberships = pgTable(
     index("athlete_team_memberships_team_id_idx").on(t.teamId),
     unique("athlete_team_memberships_athlete_team_start_uq").on(
       t.athleteId, t.teamId, t.startDate,
-    ),
+    ).nullsNotDistinct(),
   ],
 );
 

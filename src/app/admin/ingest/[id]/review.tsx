@@ -31,7 +31,7 @@ export function ReviewQueue(
     const res = await fetch(`/api/admin/ingest/${batchId}/commit`, { method: "POST" });
     const data = await res.json();
     setMessage(res.ok
-      ? `Committed: ${data.promotions} promotions, ${data.events} events, ${data.athletes} athletes, ${data.matches} matches, ${data.placements} placements, ${data.videos} videos (as drafts).`
+      ? `Committed: ${data.promotions} promotions, ${data.teams} teams, ${data.events} events, ${data.athletes} athletes, ${data.matches} matches, ${data.placements} placements, ${data.videos} videos, ${data.memberships} memberships (as drafts).`
       : `Commit failed: ${data.error}`);
   }
 
