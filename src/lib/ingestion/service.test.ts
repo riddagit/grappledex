@@ -8,6 +8,7 @@ import {
 } from "@/lib/ingestion/service";
 import { athletes } from "@/db/schema/athlete";
 import { matches, matchCompetitors } from "@/db/schema/match";
+import { placements } from "@/db/schema/placement";
 import { createAthlete } from "@/lib/athletes/service";
 
 let ctx: Awaited<ReturnType<typeof createTestDb>>;
@@ -30,7 +31,9 @@ const graph: CandidateGraph = {
       { athleteRef: "a2", outcome: "LOST", slotOrder: 2 },
     ],
   }],
-  placements: [],
+  placements: [
+    { localRef: "pl1", eventRef: "e1", athleteRef: "a1", division: "Absolute", place: 1 },
+  ],
 };
 
 async function extractAll() {
@@ -49,14 +52,14 @@ describe("ingestion service", () => {
     const batch = await extractAll();
     const loaded = (await getBatch(ctx.db, batch.id))!;
     expect(loaded.batch.status).toBe("review");
-    expect(loaded.candidates).toHaveLength(5); // 2 athletes, 1 promo, 1 event, 1 match
+    expect(loaded.candidates).toHaveLength(6); // 2 athletes, 1 promo, 1 event, 1 match, 1 placement
   });
 
   it("commitBatch writes draft/NEEDS_REVIEW rows and links match competitors", async () => {
     const batch = await extractAll();
     await acceptAll(batch.id);
     const counts = await commitBatch(ctx.db, batch.id);
-    expect(counts).toEqual({ promotions: 1, events: 1, athletes: 2, matches: 1 });
+    expect(counts).toEqual({ promotions: 1, events: 1, athletes: 2, matches: 1, placements: 1 });
 
     const athleteRows = await ctx.db.select().from(athletes);
     expect(athleteRows).toHaveLength(2);
@@ -107,5 +110,57 @@ describe("ingestion service", () => {
     await acceptAll(batch.id);
     await commitBatch(ctx.db, batch.id);
     await expect(commitBatch(ctx.db, batch.id)).rejects.toThrow(/not in review/);
+  });
+
+  it("commits placements linked to the resolved event and athlete", async () => {
+    const batch = await extractAll();
+    await acceptAll(batch.id);
+    await commitBatch(ctx.db, batch.id);
+
+    const placementRows = await ctx.db.select().from(placements);
+    expect(placementRows).toHaveLength(1);
+    expect(placementRows[0]!.division).toBe("Absolute");
+    expect(placementRows[0]!.place).toBe(1);
+    expect(placementRows[0]!.confidence).toBe("NEEDS_REVIEW");
+
+    const athleteRows = await ctx.db.select().from(athletes);
+    const gordon = athleteRows.find((a) => a.fullName === "Gordon Ryan")!;
+    expect(placementRows[0]!.athleteId).toBe(gordon.id);
+  });
+
+  it("rejects the commit when a placement references a rejected event", async () => {
+    const batch = await extractAll();
+    const loaded = (await getBatch(ctx.db, batch.id))!;
+    // Reject the event AND the match (the match also references the event, so
+    // rejecting it keeps the match out of validation and isolates the placement
+    // ref-check as the failing path).
+    for (const c of loaded.candidates) {
+      const reject = c.entityType === "event" || c.entityType === "match";
+      await setDecision(ctx.db, c.id, reject ? "reject" : "accept");
+    }
+    await expect(commitBatch(ctx.db, batch.id)).rejects.toThrow(
+      /placement pl1 references uncommitted event ref/,
+    );
+  });
+
+  it("skips a duplicate placement instead of aborting the commit", async () => {
+    // First batch commits the placement.
+    const first = await extractAll();
+    await acceptAll(first.id);
+    await commitBatch(ctx.db, first.id);
+
+    // Re-ingest: merge every entity that resolves to an existing row, so the
+    // placement points at the same event+athlete+division. The duplicate must
+    // be skipped (count 0) rather than aborting the whole transactional commit.
+    const second = await extractAll();
+    const loaded = (await getBatch(ctx.db, second.id))!;
+    for (const c of loaded.candidates) {
+      await setDecision(ctx.db, c.id, c.resolvedEntityId ? "merge" : "accept");
+    }
+    const counts = await commitBatch(ctx.db, second.id);
+    expect(counts.placements).toBe(0);
+
+    const placementRows = await ctx.db.select().from(placements);
+    expect(placementRows).toHaveLength(1);
   });
 });
