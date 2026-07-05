@@ -5,16 +5,19 @@ import {
   type IngestionBatch, type IngestionCandidate,
 } from "@/db/schema/ingestion";
 import { placements } from "@/db/schema/placement";
+import { videos } from "@/db/schema/video";
 import { resolveCandidates } from "@/lib/ingestion/resolve";
 import type { Extractor } from "@/lib/ingestion/extract";
 import type {
-  AthleteCandidate, PromotionCandidate, EventCandidate, MatchCandidate, PlacementCandidate,
+  AthleteCandidate, PromotionCandidate, EventCandidate, MatchCandidate,
+  PlacementCandidate, VideoCandidate,
 } from "@/lib/ingestion/schema";
 import { createPromotion } from "@/lib/promotions/service";
 import { createEvent } from "@/lib/events/service";
 import { createAthlete } from "@/lib/athletes/service";
 import { createMatch } from "@/lib/matches/service";
 import { addPlacement } from "@/lib/placements/service";
+import { addVideo } from "@/lib/videos/service";
 
 export async function createBatch(
   db: Db,
@@ -103,7 +106,7 @@ export async function setDecision(
 export async function commitBatch(
   db: Db,
   batchId: string,
-): Promise<{ promotions: number; events: number; athletes: number; matches: number; placements: number }> {
+): Promise<{ promotions: number; events: number; athletes: number; matches: number; placements: number; videos: number }> {
   const loaded = await getBatch(db, batchId);
   if (!loaded) throw new Error(`commitBatch: batch ${batchId} not found`);
   if (loaded.batch.status !== "review") {
@@ -133,6 +136,7 @@ export async function commitBatch(
   const promoRefs = committableRefs("promotion");
   const eventRefs = committableRefs("event");
   const athleteRefs = committableRefs("athlete");
+  const matchRefs = committableRefs("match");
 
   for (const c of byType("event")) {
     const p = c.payload as EventCandidate;
@@ -160,11 +164,18 @@ export async function commitBatch(
       throw new Error(`commitBatch: placement ${pl.localRef} references uncommitted athlete ref ${pl.athleteRef}`);
     }
   }
+  for (const c of byType("video")) {
+    const v = c.payload as VideoCandidate;
+    if (!matchRefs.has(v.matchRef)) {
+      throw new Error(`commitBatch: video ${v.localRef} references uncommitted match ref ${v.matchRef}`);
+    }
+  }
 
-  const counts = { promotions: 0, events: 0, athletes: 0, matches: 0, placements: 0 };
+  const counts = { promotions: 0, events: 0, athletes: 0, matches: 0, placements: 0, videos: 0 };
   const promoMap = new Map<string, string>();
   const eventMap = new Map<string, string>();
   const athleteMap = new Map<string, string>();
+  const matchMap = new Map<string, string>();
 
   await db.transaction(async (tx) => {
     // The shared `Db` type does not model Drizzle transaction objects, though a
@@ -248,6 +259,7 @@ export async function commitBatch(
         })),
         ...provenance,
       });
+      matchMap.set(c.localRef, created.id);
       await tx
         .update(ingestionCandidates)
         .set({ committedEntityId: created.id })
@@ -288,6 +300,35 @@ export async function commitBatch(
         .where(eq(ingestionCandidates.id, c.id));
 
       if (!existingId) counts.placements += 1;
+    }
+
+    for (const c of byType("video")) {
+      const v = c.payload as VideoCandidate;
+      const matchId = matchMap.get(v.matchRef)!;
+
+      // Unique (match, url): skip an existing video so a re-ingest does not
+      // abort the whole transactional commit.
+      const dup = await tx
+        .select({ id: videos.id })
+        .from(videos)
+        .where(and(eq(videos.matchId, matchId), eq(videos.url, v.url)));
+      const existingId = dup[0]?.id;
+
+      const id = existingId ?? (await addVideo(stx, {
+        matchId,
+        url: v.url,
+        title: v.title ?? undefined,
+        confidence: provenance.confidence,
+        verifiedBy: provenance.verifiedBy,
+        sourceUrl: provenance.sourceUrl,
+      })).id;
+
+      await tx
+        .update(ingestionCandidates)
+        .set({ committedEntityId: id })
+        .where(eq(ingestionCandidates.id, c.id));
+
+      if (!existingId) counts.videos += 1;
     }
 
     await tx

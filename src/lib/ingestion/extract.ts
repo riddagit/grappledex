@@ -16,15 +16,17 @@ export class FakeExtractor implements Extractor {
 
 export const EXTRACTION_SYSTEM_PROMPT = [
   "You extract structured BJJ / no-gi grappling records from pasted text.",
-  "Return athletes, promotions, events, matches, and placements you can find.",
-  "Give every entity a short unique localRef (e.g. a1, p1, e1, m1, pl1).",
+  "Return athletes, promotions, events, matches, placements, and videos you can find.",
+  "Give every entity a short unique localRef (e.g. a1, p1, e1, m1, pl1, v1).",
   "Matches reference their event via eventRef and each competitor via athleteRef;",
   "events reference their promotion via promotionRef; placements reference their",
-  "event via eventRef and athlete via athleteRef — always use the localRefs of",
-  "entities you also returned. A placement records that an athlete finished in a",
-  "given division/weight class at a given place (1 = champion, 2 = runner-up,",
-  "3 = third). Dates are YYYY-MM-DD. Only include facts present in the text; do",
-  "not invent competitors, methods, placements, or dates.",
+  "event via eventRef and athlete via athleteRef; videos reference their match via",
+  "matchRef — always use the localRefs of entities you also returned. A placement",
+  "records that an athlete finished in a given division/weight class at a given",
+  "place (1 = champion, 2 = runner-up, 3 = third). A video is a link to footage of",
+  "a specific match: include one only when the text gives an actual video URL, with",
+  "that url and an optional title. Dates are YYYY-MM-DD. Only include facts present",
+  "in the text; do not invent competitors, methods, placements, video URLs, or dates.",
 ].join(" ");
 
 /**
