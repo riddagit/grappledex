@@ -17,6 +17,7 @@ const graph: CandidateGraph = {
   promotions: [{ localRef: "p1", name: "ADCC" }],
   events: [],
   matches: [],
+  placements: [],
 };
 
 describe("resolveCandidates", () => {

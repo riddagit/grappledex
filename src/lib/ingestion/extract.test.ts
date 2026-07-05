@@ -10,6 +10,7 @@ const graph: CandidateGraph = {
     localRef: "m1", eventRef: "e1", matchType: "SUPERFIGHT", method: "DECISION",
     competitors: [{ athleteRef: "a1", outcome: "WON" }],
   }],
+  placements: [],
 };
 
 describe("FakeExtractor", () => {

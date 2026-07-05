@@ -30,6 +30,7 @@ const graph: CandidateGraph = {
       { athleteRef: "a2", outcome: "LOST", slotOrder: 2 },
     ],
   }],
+  placements: [],
 };
 
 async function extractAll() {

@@ -19,6 +19,9 @@ const sample = {
       ],
     },
   ],
+  placements: [
+    { localRef: "pl1", eventRef: "e1", athleteRef: "a1", division: "Absolute", place: 1 },
+  ],
 };
 
 describe("ExtractionSchema", () => {
@@ -39,6 +42,18 @@ describe("ExtractionSchema", () => {
     const bad = structuredClone(sample);
     // @ts-expect-error deliberately missing required field
     delete bad.athletes[0].localRef;
+    expect(ExtractionSchema.safeParse(bad).success).toBe(false);
+  });
+
+  it("parses placements referencing event and athlete", () => {
+    const parsed = ExtractionSchema.parse(sample);
+    expect(parsed.placements[0]?.athleteRef).toBe("a1");
+    expect(parsed.placements[0]?.place).toBe(1);
+  });
+
+  it("rejects a placement with a non-positive place", () => {
+    const bad = structuredClone(sample);
+    bad.placements[0].place = 0;
     expect(ExtractionSchema.safeParse(bad).success).toBe(false);
   });
 });
