@@ -2,9 +2,15 @@ import { describe, it, expect } from "vitest";
 import { IngestSchema, DecisionSchema } from "./validation";
 
 describe("ingest validation", () => {
-  it("accepts a paste with text and rejects empty text", () => {
+  it("accepts exactly one of sourceText or sourceUrl", () => {
     expect(IngestSchema.safeParse({ sourceText: "hi" }).success).toBe(true);
+    expect(IngestSchema.safeParse({ sourceUrl: "https://example.com/a" }).success).toBe(true);
     expect(IngestSchema.safeParse({ sourceText: "" }).success).toBe(false);
+    expect(IngestSchema.safeParse({ sourceUrl: "not-a-url" }).success).toBe(false);
+    expect(IngestSchema.safeParse({}).success).toBe(false);
+    expect(
+      IngestSchema.safeParse({ sourceText: "hi", sourceUrl: "https://example.com/a" }).success,
+    ).toBe(false);
   });
 
   it("validates a decision payload", () => {

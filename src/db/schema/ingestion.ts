@@ -6,6 +6,7 @@ export const ingestionBatches = pgTable("ingestion_batches", {
   id: uuid("id").defaultRandom().primaryKey(),
   sourceText: text("source_text").notNull(),
   sourceNote: text("source_note"),
+  sourceUrl: text("source_url"),
   createdBy: text("created_by"),
   status: text("status", {
     enum: ["extracting", "review", "committed", "failed"],
