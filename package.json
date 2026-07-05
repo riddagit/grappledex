@@ -13,7 +13,8 @@
     "test:watch": "vitest",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:seed": "tsx --env-file-if-exists=.env.local src/db/seed-run.ts"
+    "db:seed": "tsx --env-file-if-exists=.env.local src/db/seed-run.ts",
+    "ingest:smoke": "tsx --env-file-if-exists=.env.local src/lib/ingestion/extract-smoke.ts"
   },
   "keywords": [],
   "author": "",
