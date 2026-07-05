@@ -7,3 +7,4 @@ export * from "./team";
 export * from "./membership";
 export * from "./video";
 export * from "./instructional";
+export * from "./ingestion";
