@@ -6,7 +6,7 @@ import { normalizeName } from "@/lib/identity/normalize";
 import type { CandidateGraph } from "@/lib/ingestion/schema";
 
 export type ResolvedCandidate = {
-  entityType: "athlete" | "promotion" | "event" | "match" | "placement";
+  entityType: "athlete" | "promotion" | "event" | "match" | "placement" | "video";
   localRef: string;
   payload: unknown;
   resolvedEntityId: string | null;
@@ -86,6 +86,18 @@ export async function resolveCandidates(
       entityType: "placement",
       localRef: pl.localRef,
       payload: pl,
+      resolvedEntityId: null,
+      resolvedEntityType: null,
+      matchScore: null,
+    });
+  }
+
+  // Videos: edges attached to a match — no resolution proposal in v1.
+  for (const v of graph.videos) {
+    out.push({
+      entityType: "video",
+      localRef: v.localRef,
+      payload: v,
       resolvedEntityId: null,
       resolvedEntityType: null,
       matchScore: null,

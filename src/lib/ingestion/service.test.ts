@@ -9,6 +9,7 @@ import {
 import { athletes } from "@/db/schema/athlete";
 import { matches, matchCompetitors } from "@/db/schema/match";
 import { placements } from "@/db/schema/placement";
+import { videos } from "@/db/schema/video";
 import { createAthlete } from "@/lib/athletes/service";
 
 let ctx: Awaited<ReturnType<typeof createTestDb>>;
@@ -34,6 +35,9 @@ const graph: CandidateGraph = {
   placements: [
     { localRef: "pl1", eventRef: "e1", athleteRef: "a1", division: "Absolute", place: 1 },
   ],
+  videos: [
+    { localRef: "v1", matchRef: "m1", url: "https://youtu.be/abc", title: "Ryan vs Galvao" },
+  ],
 };
 
 async function extractAll() {
@@ -52,14 +56,14 @@ describe("ingestion service", () => {
     const batch = await extractAll();
     const loaded = (await getBatch(ctx.db, batch.id))!;
     expect(loaded.batch.status).toBe("review");
-    expect(loaded.candidates).toHaveLength(6); // 2 athletes, 1 promo, 1 event, 1 match, 1 placement
+    expect(loaded.candidates).toHaveLength(7); // 2 athletes, 1 promo, 1 event, 1 match, 1 placement, 1 video
   });
 
   it("commitBatch writes draft/NEEDS_REVIEW rows and links match competitors", async () => {
     const batch = await extractAll();
     await acceptAll(batch.id);
     const counts = await commitBatch(ctx.db, batch.id);
-    expect(counts).toEqual({ promotions: 1, events: 1, athletes: 2, matches: 1, placements: 1 });
+    expect(counts).toEqual({ promotions: 1, events: 1, athletes: 2, matches: 1, placements: 1, videos: 1 });
 
     const athleteRows = await ctx.db.select().from(athletes);
     expect(athleteRows).toHaveLength(2);
@@ -162,5 +166,52 @@ describe("ingestion service", () => {
 
     const placementRows = await ctx.db.select().from(placements);
     expect(placementRows).toHaveLength(1);
+  });
+
+  it("commits videos linked to the resolved match", async () => {
+    const batch = await extractAll();
+    await acceptAll(batch.id);
+    await commitBatch(ctx.db, batch.id);
+
+    const videoRows = await ctx.db.select().from(videos);
+    expect(videoRows).toHaveLength(1);
+    expect(videoRows[0]!.url).toBe("https://youtu.be/abc");
+    expect(videoRows[0]!.title).toBe("Ryan vs Galvao");
+    expect(videoRows[0]!.confidence).toBe("NEEDS_REVIEW");
+
+    const matchRows = await ctx.db.select().from(matches);
+    expect(videoRows[0]!.matchId).toBe(matchRows[0]!.id);
+  });
+
+  it("rejects the commit when a video references a rejected match", async () => {
+    const batch = await extractAll();
+    const loaded = (await getBatch(ctx.db, batch.id))!;
+    for (const c of loaded.candidates) {
+      await setDecision(ctx.db, c.id, c.entityType === "match" ? "reject" : "accept");
+    }
+    await expect(commitBatch(ctx.db, batch.id)).rejects.toThrow(
+      /video v1 references uncommitted match ref/,
+    );
+  });
+
+  it("skips a duplicate video (same match + url) instead of aborting the commit", async () => {
+    // Two videos on the same match with the same url collide on the
+    // (match_id, url) unique constraint; the second must be skipped.
+    const dupGraph: CandidateGraph = {
+      ...graph,
+      videos: [
+        { localRef: "v1", matchRef: "m1", url: "https://youtu.be/abc" },
+        { localRef: "v2", matchRef: "m1", url: "https://youtu.be/abc" },
+      ],
+    };
+    const batch = await createBatch(ctx.db, { sourceText: "raw" });
+    await runExtraction(ctx.db, new FakeExtractor(dupGraph), batch.id);
+    await acceptAll(batch.id);
+
+    const counts = await commitBatch(ctx.db, batch.id);
+    expect(counts.videos).toBe(1);
+
+    const videoRows = await ctx.db.select().from(videos);
+    expect(videoRows).toHaveLength(1);
   });
 });

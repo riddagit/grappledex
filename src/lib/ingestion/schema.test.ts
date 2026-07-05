@@ -22,6 +22,9 @@ const sample = {
   placements: [
     { localRef: "pl1", eventRef: "e1", athleteRef: "a1", division: "Absolute", place: 1 },
   ],
+  videos: [
+    { localRef: "v1", matchRef: "m1", url: "https://youtu.be/abc", title: "Ryan vs Galvao" },
+  ],
 };
 
 describe("ExtractionSchema", () => {
@@ -54,6 +57,18 @@ describe("ExtractionSchema", () => {
   it("rejects a placement with a non-positive place", () => {
     const bad = structuredClone(sample);
     bad.placements[0]!.place = 0;
+    expect(ExtractionSchema.safeParse(bad).success).toBe(false);
+  });
+
+  it("parses videos referencing a match", () => {
+    const parsed = ExtractionSchema.parse(sample);
+    expect(parsed.videos[0]?.matchRef).toBe("m1");
+    expect(parsed.videos[0]?.url).toBe("https://youtu.be/abc");
+  });
+
+  it("rejects a video with an empty url", () => {
+    const bad = structuredClone(sample);
+    bad.videos[0]!.url = "";
     expect(ExtractionSchema.safeParse(bad).success).toBe(false);
   });
 });

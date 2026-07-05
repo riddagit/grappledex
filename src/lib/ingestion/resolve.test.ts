@@ -18,9 +18,15 @@ const graph: CandidateGraph = {
   events: [
     { localRef: "e1", promotionRef: "p1", name: "ADCC 2022", startDate: "2022-09-17" },
   ],
-  matches: [],
+  matches: [{
+    localRef: "m1", eventRef: "e1", matchType: "SUPERFIGHT", method: "DECISION",
+    competitors: [{ athleteRef: "a1", outcome: "WON" }],
+  }],
   placements: [
     { localRef: "pl1", eventRef: "e1", athleteRef: "a1", division: "Absolute", place: 1 },
+  ],
+  videos: [
+    { localRef: "v1", matchRef: "m1", url: "https://youtu.be/abc" },
   ],
 };
 
@@ -47,5 +53,14 @@ describe("resolveCandidates", () => {
     expect(placement!.localRef).toBe("pl1");
     expect(placement!.resolvedEntityId).toBeNull();
     expect(placement!.matchScore).toBeNull();
+  });
+
+  it("emits video candidates with no resolution proposal", async () => {
+    const resolved = await resolveCandidates(ctx.db, graph);
+    const video = resolved.find((r) => r.entityType === "video");
+    expect(video).toBeDefined();
+    expect(video!.localRef).toBe("v1");
+    expect(video!.resolvedEntityId).toBeNull();
+    expect(video!.matchScore).toBeNull();
   });
 });

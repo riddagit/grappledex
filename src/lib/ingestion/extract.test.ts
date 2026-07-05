@@ -18,6 +18,7 @@ const graph: CandidateGraph = {
     competitors: [{ athleteRef: "a1", outcome: "WON" }],
   }],
   placements: [],
+  videos: [{ localRef: "v1", matchRef: "m1", url: "https://youtu.be/abc" }],
 };
 
 describe("FakeExtractor", () => {
@@ -31,6 +32,10 @@ describe("FakeExtractor", () => {
 describe("EXTRACTION_SYSTEM_PROMPT", () => {
   it("instructs the model to emit placements", () => {
     expect(EXTRACTION_SYSTEM_PROMPT).toMatch(/placement/i);
+  });
+
+  it("instructs the model to emit videos", () => {
+    expect(EXTRACTION_SYSTEM_PROMPT).toMatch(/video/i);
   });
 });
 

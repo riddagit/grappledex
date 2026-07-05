@@ -53,12 +53,20 @@ export const PlacementCandidateSchema = z.object({
   place: z.number().int().positive(),
 });
 
+export const VideoCandidateSchema = z.object({
+  localRef: z.string().min(1),
+  matchRef: z.string().min(1),
+  url: z.string().min(1),
+  title: z.string().nullable().optional(),
+});
+
 export const ExtractionSchema = z.object({
   athletes: z.array(AthleteCandidateSchema),
   promotions: z.array(PromotionCandidateSchema),
   events: z.array(EventCandidateSchema),
   matches: z.array(MatchCandidateSchema),
   placements: z.array(PlacementCandidateSchema),
+  videos: z.array(VideoCandidateSchema),
 });
 
 export type CandidateGraph = z.infer<typeof ExtractionSchema>;
@@ -67,3 +75,4 @@ export type PromotionCandidate = z.infer<typeof PromotionCandidateSchema>;
 export type EventCandidate = z.infer<typeof EventCandidateSchema>;
 export type MatchCandidate = z.infer<typeof MatchCandidateSchema>;
 export type PlacementCandidate = z.infer<typeof PlacementCandidateSchema>;
+export type VideoCandidate = z.infer<typeof VideoCandidateSchema>;
