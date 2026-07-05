@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { createTestDb } from "@/db/test-db";
 import { seed } from "@/db/seed";
 import { createAthlete } from "@/lib/athletes/service";
-import { search } from "@/lib/public/search";
+import { search, rows } from "@/lib/public/search";
 
 let ctx: Awaited<ReturnType<typeof createTestDb>>;
 beforeEach(async () => { ctx = await createTestDb(); });
@@ -47,5 +47,21 @@ describe("search", () => {
     await seed(ctx.db);
     const r = await search(ctx.db, "a", 1); // 'a:*' matches several athletes
     expect(r.athletes.length).toBeLessThanOrEqual(1);
+  });
+});
+
+// The integration tests above only exercise the pglite driver, whose db.execute()
+// returns { rows: [...] }. postgres-js (production) returns a bare row array, which
+// crashed the read layer until rows() was made driver-agnostic. Guard both shapes.
+describe("rows (driver-shape normalizer)", () => {
+  const data = [{ id: 1 }, { id: 2 }];
+  it("handles the postgres-js bare-array result", () => {
+    expect(rows(data)).toEqual(data);
+  });
+  it("handles the pglite { rows } result", () => {
+    expect(rows({ rows: data })).toEqual(data);
+  });
+  it("returns [] for a rowless result", () => {
+    expect(rows({})).toEqual([]);
   });
 });

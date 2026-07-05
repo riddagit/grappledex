@@ -8,8 +8,11 @@ export type SearchResults = {
 };
 
 type Row = Record<string, unknown>;
-function rows(res: unknown): Row[] {
-  return (res as { rows: Row[] }).rows;
+// db.execute() returns a bare row array on postgres-js (prod) but { rows: [...] } on
+// pglite (tests). Normalize both so the read layer is driver-agnostic.
+export function rows(res: unknown): Row[] {
+  if (Array.isArray(res)) return res as Row[];
+  return (res as { rows?: Row[] }).rows ?? [];
 }
 
 export async function search(db: Db, rawQuery: string, limit = 5): Promise<SearchResults> {
