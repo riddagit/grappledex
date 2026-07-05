@@ -1,18 +1,20 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import type { Db } from "@/db/client";
 import {
   ingestionBatches, ingestionCandidates,
   type IngestionBatch, type IngestionCandidate,
 } from "@/db/schema/ingestion";
+import { placements } from "@/db/schema/placement";
 import { resolveCandidates } from "@/lib/ingestion/resolve";
 import type { Extractor } from "@/lib/ingestion/extract";
 import type {
-  AthleteCandidate, PromotionCandidate, EventCandidate, MatchCandidate,
+  AthleteCandidate, PromotionCandidate, EventCandidate, MatchCandidate, PlacementCandidate,
 } from "@/lib/ingestion/schema";
 import { createPromotion } from "@/lib/promotions/service";
 import { createEvent } from "@/lib/events/service";
 import { createAthlete } from "@/lib/athletes/service";
 import { createMatch } from "@/lib/matches/service";
+import { addPlacement } from "@/lib/placements/service";
 
 export async function createBatch(
   db: Db,
@@ -101,7 +103,7 @@ export async function setDecision(
 export async function commitBatch(
   db: Db,
   batchId: string,
-): Promise<{ promotions: number; events: number; athletes: number; matches: number }> {
+): Promise<{ promotions: number; events: number; athletes: number; matches: number; placements: number }> {
   const loaded = await getBatch(db, batchId);
   if (!loaded) throw new Error(`commitBatch: batch ${batchId} not found`);
   if (loaded.batch.status !== "review") {
@@ -149,8 +151,17 @@ export async function commitBatch(
       }
     }
   }
+  for (const c of byType("placement")) {
+    const pl = c.payload as PlacementCandidate;
+    if (!eventRefs.has(pl.eventRef)) {
+      throw new Error(`commitBatch: placement ${pl.localRef} references uncommitted event ref ${pl.eventRef}`);
+    }
+    if (!athleteRefs.has(pl.athleteRef)) {
+      throw new Error(`commitBatch: placement ${pl.localRef} references uncommitted athlete ref ${pl.athleteRef}`);
+    }
+  }
 
-  const counts = { promotions: 0, events: 0, athletes: 0, matches: 0 };
+  const counts = { promotions: 0, events: 0, athletes: 0, matches: 0, placements: 0 };
   const promoMap = new Map<string, string>();
   const eventMap = new Map<string, string>();
   const athleteMap = new Map<string, string>();
@@ -242,6 +253,41 @@ export async function commitBatch(
         .set({ committedEntityId: created.id })
         .where(eq(ingestionCandidates.id, c.id));
       counts.matches += 1;
+    }
+
+    for (const c of byType("placement")) {
+      const pl = c.payload as PlacementCandidate;
+      const eventId = eventMap.get(pl.eventRef)!;
+      const athleteId = athleteMap.get(pl.athleteRef)!;
+
+      // Unique (event, athlete, division): skip an existing placement so a
+      // re-ingest does not abort the whole transactional commit.
+      const dup = await tx
+        .select({ id: placements.id })
+        .from(placements)
+        .where(and(
+          eq(placements.eventId, eventId),
+          eq(placements.athleteId, athleteId),
+          eq(placements.division, pl.division),
+        ));
+      const existingId = dup[0]?.id;
+
+      const id = existingId ?? (await addPlacement(stx, {
+        eventId,
+        athleteId,
+        division: pl.division,
+        place: pl.place,
+        confidence: provenance.confidence,
+        verifiedBy: provenance.verifiedBy,
+        sourceUrl: provenance.sourceUrl,
+      })).id;
+
+      await tx
+        .update(ingestionCandidates)
+        .set({ committedEntityId: id })
+        .where(eq(ingestionCandidates.id, c.id));
+
+      if (!existingId) counts.placements += 1;
     }
 
     await tx
