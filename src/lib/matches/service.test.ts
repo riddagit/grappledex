@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { eq } from "drizzle-orm";
 import { createTestDb } from "@/db/test-db";
 import { createAthlete } from "@/lib/athletes/service";
 import { createPromotion } from "@/lib/promotions/service";
@@ -38,6 +39,25 @@ describe("createMatch", () => {
     expect(match.method).toBe("SUBMISSION");
     const forEvent = await listMatchesForEvent(ctx.db, event.id);
     expect(forEvent).toHaveLength(1);
+  });
+
+  it("persists format and a unique source_ref", async () => {
+    const event = await seedEvent();
+    const a = await createAthlete(ctx.db, { fullName: "Gordon Ryan" });
+    const b = await createAthlete(ctx.db, { fullName: "Felipe Pena" });
+
+    const m = await createMatch(ctx.db, {
+      eventId: event.id, matchType: "SUPERFIGHT", method: "SUBMISSION",
+      format: "nogi", sourceRef: "bjjheroes:8858",
+      competitors: [
+        { athleteId: a.id, outcome: "WON", slotOrder: 1 },
+        { athleteId: b.id, outcome: "LOST", slotOrder: 2 },
+      ],
+    });
+
+    const row = (await ctx.db.select().from(matches).where(eq(matches.id, m.id)))[0];
+    expect(row?.format).toBe("nogi");
+    expect(row?.sourceRef).toBe("bjjheroes:8858");
   });
 
   it("rolls back the match when a competitor insert fails", async () => {
