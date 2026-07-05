@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Grappledex — the definitive no-gi grappling records database",
+  title: "RollVault — the definitive no-gi grappling records database",
   description:
     "Verified, structured records for elite professional no-gi grappling: athletes, matches, events and finishes.",
 };
@@ -9,7 +9,7 @@ export const metadata = {
 export default function LandingPage() {
   return (
     <main className="wrap">
-      <div className="eyebrow"><span>Grappledex</span></div>
+      <div className="eyebrow"><span>RollVault</span></div>
       <h1 className="athlete-name">The record<br />of record.</h1>
       <div className="record">
         <p style={{ maxWidth: "34rem", margin: 0 }}>

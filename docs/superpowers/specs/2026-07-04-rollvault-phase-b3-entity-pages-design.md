@@ -1,9 +1,9 @@
-# Grappledex Phase B.3 — Match / Event / Promotion / Team Pages (Design)
+# RollVault Phase B.3 — Match / Event / Promotion / Team Pages (Design)
 
 **Date:** 2026-07-04
 **Status:** Proposed — awaiting user review.
 **Depends on:** Phase B.1 (public read layer + seed) and B.2 (design system, athlete page).
-**Parent:** `2026-07-04-grappledex-phase-b-public-pages-design.md` §7 (B.3).
+**Parent:** `2026-07-04-rollvault-phase-b-public-pages-design.md` §7 (B.3).
 
 ---
 

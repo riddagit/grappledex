@@ -12,9 +12,9 @@ describe("siteUrl", () => {
   });
 
   it("honours the env override and falls back to the placeholder", () => {
-    process.env.NEXT_PUBLIC_SITE_URL = "https://grappledex.test";
-    expect(siteUrl("/")).toBe("https://grappledex.test/");
+    process.env.NEXT_PUBLIC_SITE_URL = "https://rollvault.test";
+    expect(siteUrl("/")).toBe("https://rollvault.test/");
     delete process.env.NEXT_PUBLIC_SITE_URL;
-    expect(siteUrl("/")).toBe("https://grappledex.com/");
+    expect(siteUrl("/")).toBe("https://rollvault.net/");
   });
 });

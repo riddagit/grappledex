@@ -1,4 +1,4 @@
-# Local development Postgres for Grappledex.
+# Local development Postgres for RollVault.
 #   docker compose up -d      # start (data persists in the named volume)
 #   npm run db:migrate        # apply Drizzle migrations
 #   npm run db:seed           # load the demo slice
@@ -10,16 +10,16 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: grappledex
-      POSTGRES_PASSWORD: grappledex
-      POSTGRES_DB: grappledex
+      POSTGRES_USER: rollvault
+      POSTGRES_PASSWORD: rollvault
+      POSTGRES_DB: rollvault
     volumes:
-      - grappledex-pgdata:/var/lib/postgresql/data
+      - rollvault-pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U grappledex -d grappledex"]
+      test: ["CMD-SHELL", "pg_isready -U rollvault -d rollvault"]
       interval: 5s
       timeout: 5s
       retries: 10
 
 volumes:
-  grappledex-pgdata:
+  rollvault-pgdata:

@@ -1,9 +1,9 @@
-# Grappledex Phase C — Public Search (Design)
+# RollVault Phase C — Public Search (Design)
 
 **Date:** 2026-07-04
 **Status:** Proposed.
 **Depends on:** Phase B (public read layer + entity pages + SEO).
-**Parent:** `2026-07-03-grappledex-v1-design.md` §6 ("Search v1 = Postgres FTS"), §7 (Phase C).
+**Parent:** `2026-07-03-rollvault-v1-design.md` §6 ("Search v1 = Postgres FTS"), §7 (Phase C).
 
 ---
 

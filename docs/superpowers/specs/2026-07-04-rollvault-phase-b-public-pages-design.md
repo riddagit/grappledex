@@ -1,4 +1,4 @@
-# Grappledex Phase B — Public Entity Pages + Secondary Layer (Design)
+# RollVault Phase B — Public Entity Pages + Secondary Layer (Design)
 
 **Date:** 2026-07-04
 **Status:** In progress — functional structure locked in v1 spec §6; **visual/aesthetic
@@ -28,7 +28,7 @@ verification, and the SEO baseline.
 | `/event/[slug]` | Event | promotion, date, venue, full results, competitors, videos |
 | `/promotion/[slug]` | Promotion | its events |
 | `/team/[slug]` | Team | current roster + alumni (temporal) |
-| `/` | Landing | minimal: what Grappledex is + entry points (deep pages are the SEO surface) |
+| `/` | Landing | minimal: what RollVault is + entry points (deep pages are the SEO surface) |
 
 **Publication filter:** public pages render **only `published` entities**; `draft` rows
 404 publicly. Memberships/placements/videos/instructionals inherit their parent's state.

@@ -5,7 +5,7 @@ export function SiteHeader() {
   return (
     <header className="site-header">
       <div className="site-header-inner">
-        <Link href="/" className="wordmark">Grappledex</Link>
+        <Link href="/" className="wordmark">RollVault</Link>
         <SearchBox />
       </div>
     </header>

@@ -30,10 +30,10 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { slug } = await params;
   const page = await getAthletePage(db, slug);
-  if (!page) return { title: "Not found — Grappledex" };
+  if (!page) return { title: "Not found — RollVault" };
   const { athlete, record } = page;
   return {
-    title: `${athlete.fullName} — record, matches & finishes — Grappledex`,
+    title: `${athlete.fullName} — record, matches & finishes — RollVault`,
     description: `${athlete.fullName}: ${record.wins}–${record.losses} in professional no-gi grappling, with full match history and submission breakdown.`,
   };
 }

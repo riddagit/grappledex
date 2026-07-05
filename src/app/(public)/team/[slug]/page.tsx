@@ -11,8 +11,8 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { slug } = await params;
   const page = await getTeamPage(db, slug);
-  if (!page) return { title: "Not found — Grappledex" };
-  const title = `${page.team.name} — roster & alumni — Grappledex`;
+  if (!page) return { title: "Not found — RollVault" };
+  const title = `${page.team.name} — roster & alumni — RollVault`;
   const description = `${page.team.name} grappling team: current roster and notable alumni.`;
   return { title, description, openGraph: { title, description } };
 }

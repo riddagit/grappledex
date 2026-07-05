@@ -1,8 +1,8 @@
-# Grappledex Phase A.1 — Athlete Identity Core Implementation Plan
+# RollVault Phase A.1 — Athlete Identity Core Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Stand up the Grappledex project and implement the Athlete identity core — schema, migrations, and a typed, tested write-path with duplicate detection (entity resolution) and provenance — proving the architecture end-to-end on one entity.
+**Goal:** Stand up the RollVault project and implement the Athlete identity core — schema, migrations, and a typed, tested write-path with duplicate detection (entity resolution) and provenance — proving the architecture end-to-end on one entity.
 
 **Architecture:** Next.js (App Router) + TypeScript app with Postgres as source of truth, accessed via Drizzle ORM. All writes go through a typed service layer, never direct DB access from UI. Entity-resolution scoring is a pure, dependency-free function (unit-tested in isolation); the service layer combines it with DB queries. Tests run against in-process Postgres (pglite) so they are hermetic and need no Docker.
 
@@ -34,7 +34,7 @@
 
 - [ ] **Step 1: Initialize the project and install dependencies**
 
-Run from repo root (`C:\Coding\Projects\grappledex`):
+Run from repo root (`C:\Coding\Projects\rollvault`):
 
 ```bash
 npm init -y
@@ -108,7 +108,7 @@ node_modules
 
 ```
 # Runtime Postgres (Neon or Supabase). Tests use in-process pglite instead.
-DATABASE_URL=postgres://user:password@host:5432/grappledex
+DATABASE_URL=postgres://user:password@host:5432/rollvault
 ```
 
 Add scripts to `package.json` (merge into the generated file):
@@ -628,7 +628,7 @@ describe("createAthlete", () => {
   it("creates an athlete with a derived slug and stamps verification", async () => {
     const a = await createAthlete(ctx.db, {
       fullName: "Gordon Ryan",
-      verifiedBy: "editor@grappledex",
+      verifiedBy: "editor@rollvault",
       confidence: "CONFIRMED",
       sourceUrl: "https://adcombat.com/results",
     });

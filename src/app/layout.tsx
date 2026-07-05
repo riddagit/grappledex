@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Grappledex — no-gi grappling records",
+  title: "RollVault — no-gi grappling records",
   description: "The definitive database of professional no-gi grappling.",
 };
 

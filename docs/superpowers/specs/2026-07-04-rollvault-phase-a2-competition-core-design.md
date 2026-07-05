@@ -1,8 +1,8 @@
-# Grappledex — Phase A.2 Design Spec: Competition Core
+# RollVault — Phase A.2 Design Spec: Competition Core
 
 **Date:** 2026-07-04
 **Status:** Approved (brainstorming complete) → ready for implementation planning
-**Parent spec:** `docs/superpowers/specs/2026-07-03-grappledex-v1-design.md`
+**Parent spec:** `docs/superpowers/specs/2026-07-03-rollvault-v1-design.md`
 **Builds on:** Phase A.1 — Athlete identity core (merged to `master`)
 
 ---

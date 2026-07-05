@@ -6,7 +6,7 @@
 
 ## Goal
 
-Give editors a faster path to get real BJJ/no-gi data into Grappledex than the
+Give editors a faster path to get real BJJ/no-gi data into RollVault than the
 manual admin forms: **paste raw text → an LLM extracts structured records → the
 editor reviews/edits them in admin → they are committed** into the existing
 entity tables. This is the first slice of the broader Phase D vision (scrape →

@@ -1,4 +1,4 @@
-# Grappledex Phase A.3 — Team + Temporal Membership (Design)
+# RollVault Phase A.3 — Team + Temporal Membership (Design)
 
 **Date:** 2026-07-04
 **Status:** Approved (decisions locked in v1 spec §4) → ready for implementation

@@ -1,4 +1,4 @@
-# Grappledex Phase A.4 — Secondary Layer (Video + Instructional) Implementation Plan
+# RollVault Phase A.4 — Secondary Layer (Video + Instructional) Implementation Plan
 
 **Status:** ✅ Complete — implemented on `phase-a4-secondary-layer` (not yet merged;
 awaiting explicit OK to merge/push). All 5 tasks done; full suite **83 tests green**,
@@ -10,7 +10,7 @@ typed, tested schema + write-path services plus admin entry surfaces, completing
 Phase A foundation. Reuses the provenance, no-status, slug, and entity-resolution patterns
 from A.1–A.3.
 
-**Design:** `docs/superpowers/specs/2026-07-04-grappledex-phase-a4-secondary-layer-design.md`
+**Design:** `docs/superpowers/specs/2026-07-04-rollvault-phase-a4-secondary-layer-design.md`
 
 **Stack:** unchanged (Next.js 15, Drizzle, postgres-js runtime, pglite tests, Vitest, Zod).
 TDD per task: failing test → watch fail → minimal impl → watch pass → commit.

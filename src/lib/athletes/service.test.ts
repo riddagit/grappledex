@@ -12,7 +12,7 @@ describe("createAthlete", () => {
   it("creates an athlete with a derived slug and stamps verification", async () => {
     const a = await createAthlete(ctx.db, {
       fullName: "Gordon Ryan",
-      verifiedBy: "editor@grappledex",
+      verifiedBy: "editor@rollvault",
       confidence: "CONFIRMED",
       sourceUrl: "https://adcombat.com/results",
     });

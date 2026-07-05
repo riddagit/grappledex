@@ -1,18 +1,18 @@
-# Grappledex — Session Resume / Handoff
+# RollVault — Session Resume / Handoff
 
 **Purpose:** Pick up work here in any fresh session. Everything needed is in git + memory.
 
 ## Where things are
 
-- **v1 design spec:** `docs/superpowers/specs/2026-07-03-grappledex-v1-design.md`
-- **Phase A.1 plan:** `docs/superpowers/plans/2026-07-03-grappledex-phase-a1-athlete-core.md`
-- **Phase A.2 spec:** `docs/superpowers/specs/2026-07-04-grappledex-phase-a2-competition-core-design.md`
-- **Phase A.2 plan:** `docs/superpowers/plans/2026-07-04-grappledex-phase-a2-competition-core.md`
-- **Auto-memory:** `grappledex-project.md` in the Claude memory dir (indexed in MEMORY.md)
+- **v1 design spec:** `docs/superpowers/specs/2026-07-03-rollvault-v1-design.md`
+- **Phase A.1 plan:** `docs/superpowers/plans/2026-07-03-rollvault-phase-a1-athlete-core.md`
+- **Phase A.2 spec:** `docs/superpowers/specs/2026-07-04-rollvault-phase-a2-competition-core-design.md`
+- **Phase A.2 plan:** `docs/superpowers/plans/2026-07-04-rollvault-phase-a2-competition-core.md`
+- **Auto-memory:** `rollvault-project.md` in the Claude memory dir (indexed in MEMORY.md)
 
 ## What we're building (one line)
 
-Grappledex — no-gi elite grappling records database. Editorial-first, Next.js + Postgres +
+RollVault — no-gi elite grappling records database. Editorial-first, Next.js + Postgres +
 Drizzle. Phase A builds the data core + admin write-path before any public pages/automation.
 
 ## Progress log

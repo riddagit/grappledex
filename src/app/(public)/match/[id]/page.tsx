@@ -29,9 +29,9 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { id } = await params;
   const page = await getMatchPage(db, id);
-  if (!page) return { title: "Not found — Grappledex" };
+  if (!page) return { title: "Not found — RollVault" };
   const names = page.competitors.map((c) => c.name).join(" vs ");
-  const title = `${names} — ${page.event.name} — Grappledex`;
+  const title = `${names} — ${page.event.name} — RollVault`;
   const description = `${names} at ${page.event.name} (${year(page.event.startDate)}): ${methodLabel(page.match.method, page.match.methodDetail)}.`;
   return { title, description, openGraph: { title, description } };
 }

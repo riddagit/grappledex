@@ -19,7 +19,7 @@ export interface FetchDeps {
 
 const MAX_BYTES = 5 * 1024 * 1024;
 const TIMEOUT_MS = 10_000;
-const USER_AGENT = "GrappledexIngestBot/1.0 (+https://grappledex.com)";
+const USER_AGENT = "RollVaultIngestBot/1.0 (+https://rollvault.net)";
 
 /**
  * Network fetch with SSRF guard, timeout, size cap, and content-type check.

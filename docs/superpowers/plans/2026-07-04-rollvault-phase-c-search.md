@@ -543,7 +543,7 @@ import Link from "next/link";
 export function SiteHeader() {
   return (
     <header className="site-header">
-      <Link href="/" className="wordmark">Grappledex</Link>
+      <Link href="/" className="wordmark">RollVault</Link>
     </header>
   );
 }
@@ -585,7 +585,7 @@ import { search, type SearchHit, type SearchResults } from "@/lib/public/search"
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Search — Grappledex",
+  title: "Search — RollVault",
   robots: { index: false, follow: true },
 };
 
@@ -801,7 +801,7 @@ export function SiteHeader() {
   return (
     <header className="site-header">
       <div className="site-header-inner">
-        <Link href="/" className="wordmark">Grappledex</Link>
+        <Link href="/" className="wordmark">RollVault</Link>
         <SearchBox />
       </div>
     </header>

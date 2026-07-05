@@ -741,8 +741,8 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { slug } = await params;
   const page = await getPromotionPage(db, slug);
-  if (!page) return { title: "Not found — Grappledex" };
-  const title = `${page.promotion.name} — events & results — Grappledex`;
+  if (!page) return { title: "Not found — RollVault" };
+  const title = `${page.promotion.name} — events & results — RollVault`;
   const description = `${page.promotion.name} grappling events, cards and results.`;
   return { title, description, openGraph: { title, description } };
 }
@@ -824,8 +824,8 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { slug } = await params;
   const page = await getTeamPage(db, slug);
-  if (!page) return { title: "Not found — Grappledex" };
-  const title = `${page.team.name} — roster & alumni — Grappledex`;
+  if (!page) return { title: "Not found — RollVault" };
+  const title = `${page.team.name} — roster & alumni — RollVault`;
   const description = `${page.team.name} grappling team: current roster and notable alumni.`;
   return { title, description, openGraph: { title, description } };
 }
@@ -967,9 +967,9 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { id } = await params;
   const page = await getMatchPage(db, id);
-  if (!page) return { title: "Not found — Grappledex" };
+  if (!page) return { title: "Not found — RollVault" };
   const names = page.competitors.map((c) => c.name).join(" vs ");
-  const title = `${names} — ${page.event.name} — Grappledex`;
+  const title = `${names} — ${page.event.name} — RollVault`;
   const description = `${names} at ${page.event.name} (${year(page.event.startDate)}): ${methodLabel(page.match.method, page.match.methodDetail)}.`;
   return { title, description, openGraph: { title, description } };
 }
@@ -1154,8 +1154,8 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { slug } = await params;
   const page = await getEventPage(db, slug);
-  if (!page) return { title: "Not found — Grappledex" };
-  const title = `${page.event.name} — results — Grappledex`;
+  if (!page) return { title: "Not found — RollVault" };
+  const title = `${page.event.name} — results — RollVault`;
   const description = `${page.event.name} (${page.promotion.name}, ${year(page.event.startDate)}): full results and match videos.`;
   return { title, description, openGraph: { title, description } };
 }

@@ -1,4 +1,4 @@
-# Grappledex Phase A.2 — Competition Core Implementation Plan
+# RollVault Phase A.2 — Competition Core Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -137,7 +137,7 @@ describe("createPromotion", () => {
     const p = await createPromotion(ctx.db, {
       name: "Abu Dhabi Combat Club",
       shortName: "ADCC",
-      verifiedBy: "editor@grappledex",
+      verifiedBy: "editor@rollvault",
       confidence: "CONFIRMED",
     });
     expect(p.slug).toBe("abu-dhabi-combat-club");

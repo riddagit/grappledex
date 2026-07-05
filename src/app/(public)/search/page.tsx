@@ -6,7 +6,7 @@ import { search, type SearchHit, type SearchResults } from "@/lib/public/search"
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Search — Grappledex",
+  title: "Search — RollVault",
   robots: { index: false, follow: true },
 };
 

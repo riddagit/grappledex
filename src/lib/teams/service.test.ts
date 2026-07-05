@@ -11,7 +11,7 @@ describe("createTeam", () => {
     const t = await createTeam(ctx.db, {
       name: "New Wave Jiu-Jitsu",
       shortName: "New Wave",
-      verifiedBy: "editor@grappledex",
+      verifiedBy: "editor@rollvault",
       confidence: "CONFIRMED",
     });
     expect(t.slug).toBe("new-wave-jiu-jitsu");

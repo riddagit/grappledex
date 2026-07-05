@@ -1,14 +1,14 @@
-# Grappledex — v1 Design Spec
+# RollVault — v1 Design Spec
 
 **Date:** 2026-07-03
 **Status:** Approved (brainstorming complete) → ready for implementation planning
-**Working title:** Grappledex — the definitive database of professional grappling
+**Working title:** RollVault — the definitive database of professional grappling
 
 ---
 
 ## 1. Vision & wedge
 
-Grappledex is a living, connected database of professional grappling (BJJ / submission
+RollVault is a living, connected database of professional grappling (BJJ / submission
 grappling) — the place someone instinctively visits first. The long-term shape is a
 knowledge graph where athletes, matches, events, teams, techniques, instructionals and
 news are all connected, and every surface (athlete pages, rankings, GOAT index, news,

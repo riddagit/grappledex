@@ -1,4 +1,4 @@
-# Grappledex Phase A.4 — Secondary Layer: Video + Instructional (Design)
+# RollVault Phase A.4 — Secondary Layer: Video + Instructional (Design)
 
 **Date:** 2026-07-04
 **Status:** Approved (decisions locked in v1 spec §4, §6) → ready for implementation

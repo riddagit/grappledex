@@ -11,7 +11,7 @@ describe("createPromotion", () => {
     const p = await createPromotion(ctx.db, {
       name: "Abu Dhabi Combat Club",
       shortName: "ADCC",
-      verifiedBy: "editor@grappledex",
+      verifiedBy: "editor@rollvault",
       confidence: "CONFIRMED",
     });
     expect(p.slug).toBe("abu-dhabi-combat-club");

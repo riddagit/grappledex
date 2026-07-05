@@ -47,8 +47,8 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { slug } = await params;
   const page = await getEventPage(db, slug);
-  if (!page) return { title: "Not found — Grappledex" };
-  const title = `${page.event.name} — results — Grappledex`;
+  if (!page) return { title: "Not found — RollVault" };
+  const title = `${page.event.name} — results — RollVault`;
   const description = `${page.event.name} (${page.promotion.name}, ${year(page.event.startDate)}): full results and match videos.`;
   return { title, description, openGraph: { title, description } };
 }

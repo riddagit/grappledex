@@ -1,9 +1,9 @@
-# Grappledex Phase B.4 — Sitemap + robots (Design)
+# RollVault Phase B.4 — Sitemap + robots (Design)
 
 **Date:** 2026-07-04
 **Status:** Proposed.
 **Depends on:** B.1–B.3 (public read layer + all entity routes exist).
-**Parent:** `2026-07-04-grappledex-phase-b-public-pages-design.md` §6, §7 (B.4).
+**Parent:** `2026-07-04-rollvault-phase-b-public-pages-design.md` §6, §7 (B.4).
 
 ---
 
@@ -18,7 +18,7 @@ keeping them out of the private surface. This closes Phase B.
 ## 2. Base URL
 
 All absolute URLs derive from a single origin read from `process.env.NEXT_PUBLIC_SITE_URL`,
-falling back to `https://grappledex.com` (placeholder — **user to confirm the production
+falling back to `https://rollvault.net` (placeholder — **user to confirm the production
 domain**; changing the env var is the only action needed, no code change). One helper,
 `siteUrl(path)`, joins origin + path so sitemap and robots stay consistent.
 

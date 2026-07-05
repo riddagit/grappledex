@@ -1,4 +1,4 @@
-# Grappledex Phase A.3 — Team + Temporal Membership Implementation Plan
+# RollVault Phase A.3 — Team + Temporal Membership Implementation Plan
 
 **Status:** ✅ Complete — implemented on `phase-a3-team-membership`, merged to `main`.
 All 5 tasks done; full suite 65 tests green, `tsc --noEmit` clean, `next build` passes.
@@ -7,7 +7,7 @@ All 5 tasks done; full suite 65 tests green, `tsc --noEmit` clean, `next build` 
 write-path services plus an athlete-typeahead team-hub admin flow — reusing the
 provenance, draft/publish, slug, and entity-resolution patterns from A.1/A.2.
 
-**Design:** `docs/superpowers/specs/2026-07-04-grappledex-phase-a3-team-membership-design.md`
+**Design:** `docs/superpowers/specs/2026-07-04-rollvault-phase-a3-team-membership-design.md`
 
 **Stack:** unchanged from A.1/A.2 (Next.js 15, Drizzle, postgres-js runtime, pglite tests,
 Vitest, Zod). TDD per task: failing test → watch fail → minimal impl → watch pass → commit.

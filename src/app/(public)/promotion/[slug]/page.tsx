@@ -13,8 +13,8 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { slug } = await params;
   const page = await getPromotionPage(db, slug);
-  if (!page) return { title: "Not found — Grappledex" };
-  const title = `${page.promotion.name} — events & results — Grappledex`;
+  if (!page) return { title: "Not found — RollVault" };
+  const title = `${page.promotion.name} — events & results — RollVault`;
   const description = `${page.promotion.name} grappling events, cards and results.`;
   return { title, description, openGraph: { title, description } };
 }
