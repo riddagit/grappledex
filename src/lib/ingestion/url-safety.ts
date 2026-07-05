@@ -32,7 +32,7 @@ function isPrivateAddress(host: string): boolean {
     if (host.startsWith("fc") || host.startsWith("fd")) return true; // fc00::/7 ULA
     if (host.startsWith("fe80")) return true; // link-local
     const mapped = host.match(/::ffff:(\d+\.\d+\.\d+\.\d+)$/i); // IPv4-mapped
-    if (mapped) return isPrivateIPv4(mapped[1]);
+    if (mapped) return isPrivateIPv4(mapped[1]!);
     return false;
   }
   if (/^\d+\.\d+\.\d+\.\d+$/.test(host)) return isPrivateIPv4(host);
@@ -44,7 +44,8 @@ function isPrivateIPv4(ip: string): boolean {
   if (parts.length !== 4 || parts.some((n) => Number.isNaN(n) || n < 0 || n > 255)) {
     return true; // malformed → treat as unsafe
   }
-  const [a, b] = parts;
+  const a = parts[0]!;
+  const b = parts[1]!;
   if (a === 0 || a === 127) return true;            // "this" network, loopback
   if (a === 10) return true;                         // private
   if (a === 172 && b >= 16 && b <= 31) return true;  // private

@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { FakePageFetcher, HttpPageFetcher, fetchUrl, type FetchDeps } from "./fetch";
+import {
+  FakePageFetcher, HttpPageFetcher, fetchUrl,
+  type FetchDeps, type PageFetcher,
+} from "./fetch";
 
 function stubFetch(res: Response): FetchDeps {
   return { fetch: async () => res };
@@ -9,7 +12,7 @@ const htmlHeaders = { "content-type": "text/html; charset=utf-8" };
 
 describe("FakePageFetcher", () => {
   it("returns its preset result and satisfies PageFetcher", async () => {
-    const f = new FakePageFetcher({ text: "hello", title: "T" });
+    const f: PageFetcher = new FakePageFetcher({ text: "hello", title: "T" });
     expect(await f.fetch("https://ignored.example")).toEqual({ text: "hello", title: "T" });
   });
 });

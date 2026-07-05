@@ -295,6 +295,6 @@ describe("commitBatch provenance from sourceUrl", () => {
       .select()
       .from(athletes)
       .where(eq(athletes.fullName, "Gordon Ryan"));
-    expect(gordon.sourceUrl).toBe(url);
+    expect(gordon?.sourceUrl).toBe(url);
   });
 });
