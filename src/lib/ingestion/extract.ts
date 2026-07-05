@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { z } from "zod";
+import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { ExtractionSchema, type CandidateGraph } from "@/lib/ingestion/schema";
 
 export interface Extractor {
@@ -42,22 +42,24 @@ export class ClaudeExtractor implements Extractor {
   }
 
   async extract(text: string): Promise<CandidateGraph> {
-    // z.toJSONSchema (Zod v4) yields a JSON Schema with additionalProperties:false,
-    // which structured outputs requires.
-    const schema = z.toJSONSchema(ExtractionSchema);
-    const response = await this.client.messages.create({
+    // messages.parse + zodOutputFormat is the SDK's structured-outputs path: it
+    // strips JSON-schema constraints the API rejects (min/max/minLength — which
+    // ExtractionSchema uses heavily via .min(1)/.int()/.positive()), validates
+    // the response against the Zod schema, and exposes it on parsed_output.
+    const response = await this.client.messages.parse({
       model: this.model,
       max_tokens: 16000,
       thinking: { type: "adaptive" },
       system: EXTRACTION_SYSTEM_PROMPT,
-      output_config: { format: { type: "json_schema", schema } },
+      output_config: { format: zodOutputFormat(ExtractionSchema) },
       messages: [{ role: "user", content: text }],
-    } as unknown as Anthropic.MessageCreateParamsNonStreaming);
+    });
 
-    const block = response.content.find((b) => b.type === "text");
-    if (!block || block.type !== "text") {
-      throw new Error("ClaudeExtractor: no text block in response");
+    if (!response.parsed_output) {
+      throw new Error(
+        `ClaudeExtractor: no parsed output (stop_reason: ${response.stop_reason})`,
+      );
     }
-    return ExtractionSchema.parse(JSON.parse(block.text));
+    return response.parsed_output;
   }
 }
