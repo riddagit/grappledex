@@ -4,6 +4,7 @@ import { matches, matchCompetitors } from "@/db/schema/match";
 import { events } from "@/db/schema/event";
 import { promotions } from "@/db/schema/promotion";
 import { athletes } from "@/db/schema/athlete";
+import { chunk } from "@/lib/util/chunk";
 import { blockedMatchIds, publishableMatchIds } from "./queries";
 
 export type PublishResult = {
@@ -12,25 +13,47 @@ export type PublishResult = {
 
 const EMPTY: PublishResult = { matches: 0, events: 0, promotions: 0, athletes: 0, skippedBlocked: 0 };
 
-// Flip draft -> published for the given ids on one table; return rows actually changed.
+// Keep single `inArray`/update statements under the query-builder's limit; a full
+// backfill publishes ~40k matches at once.
+const ID_BATCH = 1000;
+
+// Flip draft -> published for the given ids on one table; return rows actually
+// changed. Chunked so a 40k-id publish does not overflow the query builder.
 async function flip(
   tx: Db,
   table: typeof matches | typeof events | typeof promotions | typeof athletes,
   ids: string[],
 ): Promise<number> {
-  if (!ids.length) return 0;
-  // Drizzle cannot resolve `.set()` over a union of tables, so type the builder
-  // loosely. All four tables share `id` + `status`; behaviour is covered by tests.
-  const builder = tx.update(table) as unknown as {
-    set: (v: { status: "published" }) => {
-      where: (w: unknown) => { returning: (c: { id: unknown }) => Promise<unknown[]> };
+  let changedCount = 0;
+  for (const part of chunk(ids, ID_BATCH)) {
+    // Drizzle cannot resolve `.set()` over a union of tables, so type the builder
+    // loosely. All four tables share `id` + `status`; behaviour is covered by tests.
+    const builder = tx.update(table) as unknown as {
+      set: (v: { status: "published" }) => {
+        where: (w: unknown) => { returning: (c: { id: unknown }) => Promise<unknown[]> };
+      };
     };
-  };
-  const changed = await builder
-    .set({ status: "published" })
-    .where(and(inArray(table.id, ids), eq(table.status, "draft")))
-    .returning({ id: table.id });
-  return changed.length;
+    const changed = await builder
+      .set({ status: "published" })
+      .where(and(inArray(table.id, part), eq(table.status, "draft")))
+      .returning({ id: table.id });
+    changedCount += changed.length;
+  }
+  return changedCount;
+}
+
+// Collect distinct values of one column from rows whose `keyCol` is in `ids`,
+// chunked to stay under the query-builder's limit.
+async function distinctIn(
+  tx: Db,
+  run: (part: string[]) => Promise<{ v: string }[]>,
+  ids: string[],
+): Promise<string[]> {
+  const out = new Set<string>();
+  for (const part of chunk(ids, ID_BATCH)) {
+    for (const r of await run(part)) out.add(r.v);
+  }
+  return [...out];
 }
 
 // Cascade-publish a set of already-vetted publishable match ids, plus optionally
@@ -43,23 +66,17 @@ async function cascade(
   return db.transaction(async (txRaw) => {
     const tx = txRaw as unknown as Db; // tx is structurally compatible with Db (see commitBatch)
 
-    const eventIds = targetMatchIds.length
-      ? [...new Set((await tx
-          .select({ id: matches.eventId }).from(matches)
-          .where(inArray(matches.id, targetMatchIds))).map((r) => r.id))]
-      : [];
-    const promotionIds = eventIds.length
-      ? [...new Set((await tx
-          .select({ id: events.promotionId }).from(events)
-          .where(inArray(events.id, eventIds))).map((r) => r.id))]
-      : [];
-    const athleteIdSet = new Set<string>();
-    if (targetMatchIds.length) {
-      const comps = await tx
-        .select({ id: matchCompetitors.athleteId }).from(matchCompetitors)
-        .where(inArray(matchCompetitors.matchId, targetMatchIds));
-      for (const c of comps) athleteIdSet.add(c.id);
-    }
+    const eventIds = await distinctIn(tx, (part) =>
+      tx.select({ v: matches.eventId }).from(matches).where(inArray(matches.id, part)),
+      targetMatchIds);
+    const promotionIds = await distinctIn(tx, (part) =>
+      tx.select({ v: events.promotionId }).from(events).where(inArray(events.id, part)),
+      eventIds);
+    const athleteIds = await distinctIn(tx, (part) =>
+      tx.select({ v: matchCompetitors.athleteId }).from(matchCompetitors)
+        .where(inArray(matchCompetitors.matchId, part)),
+      targetMatchIds);
+    const athleteIdSet = new Set(athleteIds);
     if (forceAthleteId) athleteIdSet.add(forceAthleteId);
 
     return {
