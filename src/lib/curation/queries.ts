@@ -4,6 +4,11 @@ import { matches, matchCompetitors } from "@/db/schema/match";
 import { athletes } from "@/db/schema/athlete";
 import { events } from "@/db/schema/event";
 import { promotions } from "@/db/schema/promotion";
+import { chunk } from "@/lib/util/chunk";
+
+// Keep single `inArray` statements under the query-builder's limit; a full
+// backfill has ~40k draft match ids.
+const ID_BATCH = 1000;
 
 export type DraftDashboard = {
   draftAthletes: number; draftPromotions: number; draftEvents: number;
@@ -87,11 +92,11 @@ export async function blockedMatches(db: Db, limit = 100): Promise<BlockedMatch[
 export async function draftAthleteSummaries(db: Db, limit = 200): Promise<DraftAthleteSummary[]> {
   const publishable = await publishableMatchIds(db);
   const byAthlete = new Map<string, number>();
-  if (publishable.length) {
+  for (const part of chunk(publishable, ID_BATCH)) {
     const comps = await db
       .select({ athleteId: matchCompetitors.athleteId, matchId: matchCompetitors.matchId })
       .from(matchCompetitors)
-      .where(inArray(matchCompetitors.matchId, publishable));
+      .where(inArray(matchCompetitors.matchId, part));
     for (const c of comps) byAthlete.set(c.athleteId, (byAthlete.get(c.athleteId) ?? 0) + 1);
   }
 
