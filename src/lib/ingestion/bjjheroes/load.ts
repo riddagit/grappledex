@@ -12,7 +12,7 @@ import { classifyFormat, classifyMatchType, classifyMethod } from "./classify";
 import type { BjjHeroesProfile } from "./parse";
 
 export type Conflict = {
-  kind: "ambiguous-athlete" | "unknown-format";
+  kind: "ambiguous-athlete" | "unknown-format" | "self-opponent";
   detail: string;
   recordId: string | null;
 };
@@ -99,6 +99,13 @@ export async function loadProfile(
     if (!opponentId) {
       conflicts.push({ kind: "ambiguous-athlete", detail: rec.opponentName, recordId: rec.bjjHeroesId });
       continue; // don't mis-attribute the match
+    }
+    if (opponentId === subjectId) {
+      // Opponent name resolved back to the subject: creating the match would insert
+      // two competitor rows with the same (match_id, athlete_id) and violate the
+      // unique constraint, aborting the whole profile. Route to review instead.
+      conflicts.push({ kind: "self-opponent", detail: rec.opponentName, recordId: rec.bjjHeroesId });
+      continue;
     }
 
     const format = classifyFormat(rec.competition);
