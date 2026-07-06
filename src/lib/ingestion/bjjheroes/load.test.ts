@@ -52,3 +52,20 @@ it("routes an ambiguous opponent to conflicts instead of guessing", async () => 
   expect(result.conflicts.some((c) => c.kind === "ambiguous-athlete")).toBe(true);
   expect(result.created.matches).toBe(0); // match skipped, not mis-attributed
 });
+
+it("routes a self-referential opponent to conflicts instead of crashing the profile", async () => {
+  const { db } = ctx;
+  // The opponent name resolves to the subject themselves (exact match). Creating a
+  // match would insert two competitor rows with the same (match_id, athlete_id) and
+  // violate the unique constraint, aborting the whole profile. It must be skipped.
+  const p = {
+    ...profile,
+    records: [
+      { ...profile.records[0]!, bjjHeroesId: "1", opponentName: "Gordon Ryan" }, // == subject
+      { ...profile.records[0]!, bjjHeroesId: "2", opponentName: "Felipe Pena" }, // normal
+    ],
+  };
+  const result = await loadProfile(db, p, "https://x");
+  expect(result.conflicts.some((c) => c.kind === "self-opponent")).toBe(true);
+  expect(result.created.matches).toBe(1); // self-match skipped; the normal one still lands
+});
