@@ -21,6 +21,10 @@ export const matches = pgTable(
       enum: ["SUBMISSION", "POINTS", "DECISION", "DQ", "OVERTIME", "FORFEIT", "NC", "DRAW"],
     }).notNull(),
     methodDetail: text("method_detail"),
+    format: text("format", { enum: ["nogi", "gi", "unknown"] })
+      .notNull()
+      .default("unknown"),
+    sourceRef: text("source_ref"),
     durationSeconds: integer("duration_seconds"),
     sourceUrl: text("source_url"),
     verifiedBy: text("verified_by"),
@@ -38,7 +42,10 @@ export const matches = pgTable(
       .notNull()
       .defaultNow(),
   },
-  (t) => [index("matches_event_id_idx").on(t.eventId)],
+  (t) => [
+    index("matches_event_id_idx").on(t.eventId),
+    unique("matches_source_ref_uq").on(t.sourceRef),
+  ],
 );
 
 export const matchCompetitors = pgTable(

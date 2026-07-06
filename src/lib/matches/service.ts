@@ -18,6 +18,8 @@ export type CreateMatchInput = {
     | "SUBMISSION" | "POINTS" | "DECISION" | "DQ"
     | "OVERTIME" | "FORFEIT" | "NC" | "DRAW";
   methodDetail?: string;
+  format?: "nogi" | "gi" | "unknown";
+  sourceRef?: string;
   durationSeconds?: number;
   competitors: MatchCompetitorInput[];
   sourceUrl?: string;
@@ -41,6 +43,8 @@ export async function createMatch(
         ruleset: input.ruleset ?? null,
         method: input.method,
         methodDetail: input.methodDetail ?? null,
+        format: input.format ?? "unknown",
+        sourceRef: input.sourceRef ?? null,
         durationSeconds: input.durationSeconds ?? null,
         sourceUrl: input.sourceUrl ?? null,
         verifiedBy: input.verifiedBy ?? null,

@@ -293,6 +293,18 @@ td.event a:hover { color: var(--ink); }
 .sd-title { font-family: var(--font-name); font-size: 0.9rem; }
 .sd-sub { font-family: var(--font-data); font-size: 0.7rem; color: var(--muted); }
 
+.site-footer {
+  margin-top: 4rem;
+  border-top: 1px solid var(--line);
+}
+.site-footer-inner {
+  max-width: var(--wrap); margin: 0 auto;
+  padding: 1.4rem clamp(1.15rem, 4vw, 2.5rem);
+  font-family: var(--font-data); font-size: 0.75rem; color: var(--faint);
+}
+.site-footer-inner a { color: var(--muted); }
+.site-footer-inner a:hover { color: var(--ink); }
+
 @media (max-width: 34rem) {
   .finish-row { grid-template-columns: 7rem 1fr 1.6rem; }
   .site-header-inner { gap: 0.8rem; }
