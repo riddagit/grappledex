@@ -6,7 +6,7 @@ function res(body: string, status = 200): Response {
 }
 
 it("returns body text and sends the honest UA", async () => {
-  const fetchImpl = vi.fn(async () => res("<html>ok</html>"));
+  const fetchImpl = vi.fn<typeof fetch>(async () => res("<html>ok</html>"));
   const fetchText = createFetcher({ fetchImpl, sleep: async () => {}, minIntervalMs: 0 });
   const body = await fetchText("https://www.bjjheroes.com/x");
   expect(body).toContain("ok");
