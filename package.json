@@ -14,7 +14,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:seed": "tsx --env-file-if-exists=.env.local src/db/seed-run.ts",
-    "ingest:smoke": "tsx --env-file-if-exists=.env.local src/lib/ingestion/extract-smoke.ts"
+    "ingest:smoke": "tsx --env-file-if-exists=.env.local src/lib/ingestion/extract-smoke.ts",
+    "ingest:bjjheroes": "tsx --env-file-if-exists=.env.local src/lib/ingestion/bjjheroes/backfill.ts"
   },
   "keywords": [],
   "author": "",
